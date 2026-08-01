@@ -20,9 +20,7 @@ import '../screens/chat/chat_list_screen.dart';
 import '../screens/chat/chat_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/review_screen.dart';
-import '../screens/owner/owner_dashboard_screen.dart';
 import '../screens/owner/add_property_screen.dart';
-import '../screens/owner/owner_reservations_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();

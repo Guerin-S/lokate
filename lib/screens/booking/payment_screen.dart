@@ -100,7 +100,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 28),
 
             // Payment method selection
-            Text('Mode de paiement', style: AppTextStyles.h4),
+            const Text('Mode de paiement', style: AppTextStyles.h4),
             const SizedBox(height: 14),
 
             _PaymentMethodTile(
@@ -185,7 +185,7 @@ class _PaymentMethodTile extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: selected ? color.withOpacity(0.06) : Theme.of(context).cardColor,
+          color: selected ? color.withValues(alpha:0.06) : Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: selected ? color : AppColors.borderLight, width: selected ? 2 : 1),
         ),
@@ -239,7 +239,7 @@ class _MobileMoneyForm extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: AppColors.warning.withOpacity(0.1),
+            color: AppColors.warning.withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(children: [
@@ -267,7 +267,7 @@ class _CardForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Numéro de carte', style: AppTextStyles.label),
+        const Text('Numéro de carte', style: AppTextStyles.label),
         const SizedBox(height: 8),
         TextFormField(
           controller: cardCtrl,
@@ -280,7 +280,7 @@ class _CardForm extends StatelessWidget {
         const SizedBox(height: 14),
         Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Expiration', style: AppTextStyles.label),
+            const Text('Expiration', style: AppTextStyles.label),
             const SizedBox(height: 8),
             TextFormField(
               controller: expiryCtrl,
@@ -290,7 +290,7 @@ class _CardForm extends StatelessWidget {
           ])),
           const SizedBox(width: 14),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('CVV', style: AppTextStyles.label),
+            const Text('CVV', style: AppTextStyles.label),
             const SizedBox(height: 8),
             TextFormField(
               controller: cvvCtrl,
@@ -304,3 +304,5 @@ class _CardForm extends StatelessWidget {
     );
   }
 }
+
+

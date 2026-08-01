@@ -66,7 +66,7 @@ class _OtpScreenState extends State<OtpScreen> {
             const SizedBox(height: 20),
             const Text('📱', style: TextStyle(fontSize: 64)),
             const SizedBox(height: 24),
-            Text('Code de vérification', style: AppTextStyles.h3),
+            const Text('Code de vérification', style: AppTextStyles.h3),
             const SizedBox(height: 8),
             Text(
               'Nous avons envoyé un code SMS au\n${widget.phone}',

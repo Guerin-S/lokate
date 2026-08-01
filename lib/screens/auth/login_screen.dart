@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 40),
-                Text('Bon retour 👋', style: AppTextStyles.h2),
+                const Text('Bon retour 👋', style: AppTextStyles.h2),
                 const SizedBox(height: 6),
                 Text('Connectez-vous à votre compte', style: AppTextStyles.body1.copyWith(color: AppColors.textSecondaryLight)),
                 const SizedBox(height: 32),
@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.error.withOpacity(0.1),
+                      color: AppColors.error.withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -192,3 +192,5 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
+

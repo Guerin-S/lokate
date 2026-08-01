@@ -38,7 +38,7 @@ class ProfileScreen extends StatelessWidget {
                           CircleAvatar(
                             radius: 40,
                             backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
-                            backgroundColor: Colors.white.withOpacity(0.2),
+                            backgroundColor: Colors.white.withValues(alpha:0.2),
                             child: user.photoUrl == null
                                 ? Text(user.name[0], style: const TextStyle(fontSize: 32, color: Colors.white, fontWeight: FontWeight.bold))
                                 : null,
@@ -87,7 +87,7 @@ class ProfileScreen extends StatelessWidget {
                           _MenuItem(
                             icon: themeService.isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
                             label: themeService.isDark ? 'Mode clair' : 'Mode sombre',
-                            trailing: Switch(value: themeService.isDark, onChanged: (_) => themeService.toggleTheme(), activeColor: AppColors.primary),
+                            trailing: Switch(value: themeService.isDark, onChanged: (_) => themeService.toggleTheme(), activeThumbColor: AppColors.primary),
                             onTap: themeService.toggleTheme,
                           ),
                           _MenuItem(icon: Icons.language, label: 'Langue / Language', onTap: () {}),
@@ -177,3 +177,5 @@ class _MenuItem extends StatelessWidget {
     );
   }
 }
+
+

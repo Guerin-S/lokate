@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
 import '../../models/models.dart';
-import '../../theme/app_theme.dart';
 
 class MainShell extends StatelessWidget {
   final Widget child;
@@ -28,7 +27,7 @@ class MainShell extends StatelessWidget {
       body: child,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 20, offset: const Offset(0, -4))],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha:0.06), blurRadius: 20, offset: const Offset(0, -4))],
         ),
         child: BottomNavigationBar(
           currentIndex: currentIndex,
@@ -56,3 +55,5 @@ class MainShell extends StatelessWidget {
     );
   }
 }
+
+

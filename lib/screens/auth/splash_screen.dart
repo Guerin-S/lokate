@@ -11,7 +11,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnim;
   late Animation<double> _scaleAnim;
@@ -19,12 +20,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1200));
     _fadeAnim = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0, 0.6, curve: Curves.easeOut)),
+      CurvedAnimation(
+          parent: _controller,
+          curve: const Interval(0, 0.6, curve: Curves.easeOut)),
     );
     _scaleAnim = Tween<double>(begin: 0.7, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0, 0.6, curve: Curves.elasticOut)),
+      CurvedAnimation(
+          parent: _controller,
+          curve: const Interval(0, 0.6, curve: Curves.elasticOut)),
     );
     _controller.forward();
     _navigate();
@@ -32,11 +38,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   Future<void> _navigate() async {
     await Future.delayed(const Duration(milliseconds: 2200));
-    if (!mounted) return;
 
     final prefs = await SharedPreferences.getInstance();
     final onboardingDone = prefs.getBool('onboarding_done') ?? false;
     final user = FirebaseAuth.instance.currentUser;
+    if (!mounted) return;
 
     if (!onboardingDone) {
       context.go('/onboarding');
@@ -73,7 +79,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     borderRadius: BorderRadius.circular(28),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha:0.2),
                         blurRadius: 30,
                         offset: const Offset(0, 10),
                       ),
@@ -101,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     fontFamily: 'Poppins',
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha:0.8),
                     letterSpacing: 1,
                   ),
                 ),
@@ -110,7 +116,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   width: 32,
                   height: 32,
                   child: CircularProgressIndicator(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha:0.7),
                     strokeWidth: 2.5,
                   ),
                 ),
@@ -122,3 +128,4 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
   }
 }
+

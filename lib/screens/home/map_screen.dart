@@ -90,7 +90,7 @@ class _MapScreenState extends State<MapScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 16)],
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha:0.12), blurRadius: 16)],
                 ),
                 child: Row(
                   children: [
@@ -162,7 +162,7 @@ class _PropertyMapCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 20, offset: const Offset(0, 6))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha:0.15), blurRadius: 20, offset: const Offset(0, 6))],
       ),
       child: Row(
         children: [
@@ -212,3 +212,5 @@ class _PropertyMapCard extends StatelessWidget {
     );
   }
 }
+
+

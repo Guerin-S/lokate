@@ -26,7 +26,8 @@ class _VirtualTourScreenState extends State<VirtualTourScreen> {
   }
 
   Future<void> _load() async {
-    final p = await context.read<PropertyService>().getProperty(widget.propertyId);
+    final p =
+        await context.read<PropertyService>().getProperty(widget.propertyId);
     setState(() => _property = p);
   }
 
@@ -37,13 +38,16 @@ class _VirtualTourScreenState extends State<VirtualTourScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Visite virtuelle 360°', style: TextStyle(color: Colors.white)),
-        leading: BackButton(onPressed: () => context.pop(), color: Colors.white),
+        title: const Text('Visite virtuelle 360°',
+            style: TextStyle(color: Colors.white)),
+        leading:
+            BackButton(onPressed: () => context.pop(), color: Colors.white),
       ),
       body: _property == null
           ? const Center(child: CircularProgressIndicator(color: Colors.white))
           : _property!.tour360Urls.isEmpty
-              ? _NoTourState(propertyId: widget.propertyId, photos: _property!.photoUrls)
+              ? _NoTourState(
+                  propertyId: widget.propertyId, photos: _property!.photoUrls)
               : Column(
                   children: [
                     Expanded(
@@ -51,7 +55,8 @@ class _VirtualTourScreenState extends State<VirtualTourScreen> {
                         controller: _pageController,
                         itemCount: _property!.tour360Urls.length,
                         onPageChanged: (i) => setState(() => _current = i),
-                        itemBuilder: (_, i) => _Tour360Viewer(imageUrl: _property!.tour360Urls[i]),
+                        itemBuilder: (_, i) =>
+                            _Tour360Viewer(imageUrl: _property!.tour360Urls[i]),
                       ),
                     ),
                     Container(
@@ -62,14 +67,25 @@ class _VirtualTourScreenState extends State<VirtualTourScreen> {
                           SmoothPageIndicator(
                             controller: _pageController,
                             count: _property!.tour360Urls.length,
-                            effect: const WormEffect(dotHeight: 6, dotWidth: 6, activeDotColor: AppColors.primary, dotColor: Colors.white24),
+                            effect: const WormEffect(
+                                dotHeight: 6,
+                                dotWidth: 6,
+                                activeDotColor: AppColors.primary,
+                                dotColor: Colors.white24),
                           ),
                           const SizedBox(height: 12),
-                          Text('Pièce ${_current + 1} / ${_property!.tour360Urls.length}',
-                            style: const TextStyle(color: Colors.white70, fontFamily: 'Poppins', fontSize: 13)),
+                          Text(
+                              'Pièce ${_current + 1} / ${_property!.tour360Urls.length}',
+                              style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 13)),
                           const SizedBox(height: 8),
                           const Text('← Glissez pour naviguer →',
-                            style: TextStyle(color: Colors.white38, fontFamily: 'Poppins', fontSize: 11)),
+                              style: TextStyle(
+                                  color: Colors.white38,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 11)),
                         ],
                       ),
                     ),
@@ -109,26 +125,33 @@ class _Tour360ViewerState extends State<_Tour360Viewer> {
       child: ClipRect(
         child: Transform(
           transform: Matrix4.identity()
-            ..translate(_offsetX, 0.0)
-            ..scale(_scale),
+            ..scaleByDouble(_scale, _scale, _scale, 1)
+            ..translateByDouble(_offsetX, 0.0, 0, 1),
           alignment: Alignment.center,
           child: Image.network(
             widget.imageUrl,
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
-            loadingBuilder: (_, child, progress) => progress == null ? child
-                : Center(child: Column(
+            loadingBuilder: (_, child, progress) => progress == null
+                ? child
+                : Center(
+                    child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       CircularProgressIndicator(
                         value: progress.expectedTotalBytes != null
-                            ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
+                            ? progress.cumulativeBytesLoaded /
+                                progress.expectedTotalBytes!
                             : null,
                         color: AppColors.primary,
                       ),
                       const SizedBox(height: 12),
-                      const Text('Chargement de la vue 360°...', style: TextStyle(color: Colors.white70, fontFamily: 'Poppins', fontSize: 12)),
+                      const Text('Chargement de la vue 360°...',
+                          style: TextStyle(
+                              color: Colors.white70,
+                              fontFamily: 'Poppins',
+                              fontSize: 12)),
                     ],
                   )),
           ),
@@ -151,9 +174,16 @@ class _NoTourState extends StatelessWidget {
         children: [
           const Text('🎥', style: TextStyle(fontSize: 64)),
           const SizedBox(height: 16),
-          const Text('Visite 360° non disponible', style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.w600)),
+          const Text('Visite 360° non disponible',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
-          const Text('Ce logement n\'a pas encore de visite virtuelle.', style: TextStyle(color: Colors.white54, fontFamily: 'Poppins', fontSize: 13)),
+          const Text('Ce logement n\'a pas encore de visite virtuelle.',
+              style: TextStyle(
+                  color: Colors.white54, fontFamily: 'Poppins', fontSize: 13)),
           const SizedBox(height: 24),
           if (photos.isNotEmpty)
             ElevatedButton.icon(

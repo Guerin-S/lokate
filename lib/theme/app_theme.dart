@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary
-  static const Color primary = Color(0xFF2563EB);       // Bleu LOKATE
+  static const Color primary = Color(0xFF2563EB); // Bleu LOKATE
   static const Color primaryDark = Color(0xFF1D4ED8);
   static const Color primaryLight = Color(0xFFEFF6FF);
 
   // Secondary / Accent
-  static const Color accent = Color(0xFFFF6B35);        // Orange chaleureux Cameroun
+  static const Color accent = Color(0xFFFF6B35); // Orange chaleureux Cameroun
   static const Color accentLight = Color(0xFFFFF0EB);
 
   // Success / Error / Warning
@@ -46,7 +46,6 @@ class AppTheme {
         primary: AppColors.primary,
         secondary: AppColors.accent,
         surface: AppColors.surfaceLight,
-        background: AppColors.bgLight,
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.bgLight,
@@ -68,7 +67,8 @@ class AppTheme {
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 52),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(
             fontFamily: 'Poppins',
             fontSize: 16,
@@ -81,7 +81,8 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
           minimumSize: const Size(double.infinity, 52),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           side: const BorderSide(color: AppColors.primary, width: 1.5),
           textStyle: const TextStyle(
             fontFamily: 'Poppins',
@@ -109,11 +110,13 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.error),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        hintStyle: const TextStyle(color: AppColors.textSecondaryLight, fontSize: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        hintStyle:
+            const TextStyle(color: AppColors.textSecondaryLight, fontSize: 14),
         labelStyle: const TextStyle(color: AppColors.textSecondaryLight),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.surfaceLight,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -141,7 +144,6 @@ class AppTheme {
         primary: AppColors.primary,
         secondary: AppColors.accent,
         surface: AppColors.surfaceDark,
-        background: AppColors.bgDark,
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.bgDark,
@@ -163,7 +165,8 @@ class AppTheme {
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 52),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(
             fontFamily: 'Poppins',
             fontSize: 16,
@@ -187,10 +190,12 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        hintStyle: const TextStyle(color: AppColors.textSecondaryDark, fontSize: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        hintStyle:
+            const TextStyle(color: AppColors.textSecondaryDark, fontSize: 14),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.surfaceDark,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -209,13 +214,25 @@ class AppTheme {
 }
 
 class AppTextStyles {
-  static const TextStyle h1 = TextStyle(fontSize: 32, fontWeight: FontWeight.w700, fontFamily: 'Poppins');
-  static const TextStyle h2 = TextStyle(fontSize: 24, fontWeight: FontWeight.w700, fontFamily: 'Poppins');
-  static const TextStyle h3 = TextStyle(fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'Poppins');
-  static const TextStyle h4 = TextStyle(fontSize: 18, fontWeight: FontWeight.w600, fontFamily: 'Poppins');
-  static const TextStyle body1 = TextStyle(fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Poppins');
-  static const TextStyle body2 = TextStyle(fontSize: 14, fontWeight: FontWeight.w400, fontFamily: 'Poppins');
-  static const TextStyle caption = TextStyle(fontSize: 12, fontWeight: FontWeight.w400, fontFamily: 'Poppins');
-  static const TextStyle label = TextStyle(fontSize: 13, fontWeight: FontWeight.w500, fontFamily: 'Poppins');
-  static const TextStyle price = TextStyle(fontSize: 22, fontWeight: FontWeight.w700, fontFamily: 'Poppins', color: AppColors.primary);
+  static const TextStyle h1 = TextStyle(
+      fontSize: 32, fontWeight: FontWeight.w700, fontFamily: 'Poppins');
+  static const TextStyle h2 = TextStyle(
+      fontSize: 24, fontWeight: FontWeight.w700, fontFamily: 'Poppins');
+  static const TextStyle h3 = TextStyle(
+      fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'Poppins');
+  static const TextStyle h4 = TextStyle(
+      fontSize: 18, fontWeight: FontWeight.w600, fontFamily: 'Poppins');
+  static const TextStyle body1 = TextStyle(
+      fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Poppins');
+  static const TextStyle body2 = TextStyle(
+      fontSize: 14, fontWeight: FontWeight.w400, fontFamily: 'Poppins');
+  static const TextStyle caption = TextStyle(
+      fontSize: 12, fontWeight: FontWeight.w400, fontFamily: 'Poppins');
+  static const TextStyle label = TextStyle(
+      fontSize: 13, fontWeight: FontWeight.w500, fontFamily: 'Poppins');
+  static const TextStyle price = TextStyle(
+      fontSize: 22,
+      fontWeight: FontWeight.w700,
+      fontFamily: 'Poppins',
+      color: AppColors.primary);
 }

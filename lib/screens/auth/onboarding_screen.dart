@@ -16,33 +16,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
 
   final List<_OnboardingPage> _pages = [
-    _OnboardingPage(
+    const _OnboardingPage(
       emoji: '🔍',
       title: 'Trouvez votre logement',
       titleEn: 'Find your home',
       subtitle: 'Parcourez des centaines d\'appartements, studios et villas à Douala et Yaoundé depuis votre téléphone.',
       color: AppColors.primary,
     ),
-    _OnboardingPage(
+    const _OnboardingPage(
       emoji: '🎥',
       title: 'Visite virtuelle 360°',
       titleEn: 'Virtual 360° tour',
       subtitle: 'Visitez chaque pièce en détail sans bouger de chez vous grâce à notre galerie interactive 360°.',
       color: AppColors.accent,
     ),
-    _OnboardingPage(
+    const _OnboardingPage(
       emoji: '📱',
       title: 'Payez en Mobile Money',
       titleEn: 'Pay with Mobile Money',
       subtitle: 'MTN MoMo, Orange Money ou carte bancaire — choisissez le mode de paiement qui vous convient.',
-      color: const Color(0xFF10B981),
+      color: Color(0xFF10B981),
     ),
-    _OnboardingPage(
+    const _OnboardingPage(
       emoji: '🔑',
       title: 'Signez en ligne',
       titleEn: 'Sign online',
       subtitle: 'Contrat signé, clés récupérées — tout se fait sans paperasse inutile.',
-      color: const Color(0xFF8B5CF6),
+      color: Color(0xFF8B5CF6),
     ),
   ];
 
@@ -134,7 +134,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: page.color.withOpacity(0.1),
+                color: page.color.withValues(alpha:0.1),
               ),
               child: Center(
                 child: Text(page.emoji, style: const TextStyle(fontSize: 100)),
@@ -186,3 +186,5 @@ class _OnboardingPage {
     required this.color,
   });
 }
+
+

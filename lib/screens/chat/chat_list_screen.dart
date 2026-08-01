@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/auth_service.dart';
-import '../../models/models.dart';
 import '../../theme/app_theme.dart';
 
 class ChatListScreen extends StatelessWidget {
@@ -91,7 +90,7 @@ class _EmptyChats extends StatelessWidget {
         children: [
           const Text('💬', style: TextStyle(fontSize: 64)),
           const SizedBox(height: 16),
-          Text('Aucun message', style: AppTextStyles.h4),
+          const Text('Aucun message', style: AppTextStyles.h4),
           const SizedBox(height: 8),
           Text('Contactez un propriétaire pour démarrer une conversation.',
             textAlign: TextAlign.center,
@@ -101,3 +100,4 @@ class _EmptyChats extends StatelessWidget {
     );
   }
 }
+

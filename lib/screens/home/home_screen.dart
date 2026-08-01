@@ -8,7 +8,6 @@ import '../../models/models.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/property_card.dart';
 import '../../widgets/property_card_horizontal.dart';
-import '../../widgets/badge_chip.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -99,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     color: isDark ? AppColors.surfaceDark : Colors.white,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
-                    boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+                    boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha:0.05), blurRadius: 10)],
                   ),
                   child: Row(
                     children: [
@@ -252,7 +251,7 @@ class _EmptyState extends StatelessWidget {
         children: [
           const Text('🏚️', style: TextStyle(fontSize: 64)),
           const SizedBox(height: 16),
-          Text('Aucun logement trouvé', style: AppTextStyles.h4),
+          const Text('Aucun logement trouvé', style: AppTextStyles.h4),
           const SizedBox(height: 8),
           Text('Modifiez vos filtres pour voir plus de résultats',
             style: AppTextStyles.body2.copyWith(color: AppColors.textSecondaryLight)),
@@ -261,3 +260,5 @@ class _EmptyState extends StatelessWidget {
     );
   }
 }
+
+

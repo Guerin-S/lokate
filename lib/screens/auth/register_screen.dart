@@ -61,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Role selector
-              Text('Je suis...', style: AppTextStyles.h4),
+              const Text('Je suis...', style: AppTextStyles.h4),
               const SizedBox(height: 12),
               Row(
                 children: [
@@ -101,7 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               if (_error != null) ...[
                 Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: AppColors.error.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(color: AppColors.error.withValues(alpha:0.1), borderRadius: BorderRadius.circular(10)),
                   child: Text(_error!, style: const TextStyle(color: AppColors.error, fontSize: 13)),
                 ),
                 const SizedBox(height: 16),
@@ -192,7 +192,7 @@ class _TabButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: selected ? [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8)] : [],
+          boxShadow: selected ? [BoxShadow(color: Colors.black.withValues(alpha:0.08), blurRadius: 8)] : [],
         ),
         child: Center(
           child: Text(label, style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600,
@@ -202,3 +202,5 @@ class _TabButton extends StatelessWidget {
     );
   }
 }
+
+

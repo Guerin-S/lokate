@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/auth_service.dart';
-import '../../models/models.dart';
 import '../../theme/app_theme.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -106,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
             decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, -2))],
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha:0.06), blurRadius: 10, offset: const Offset(0, -2))],
             ),
             child: Row(
               children: [
@@ -190,7 +189,7 @@ class _EmptyChat extends StatelessWidget {
         children: [
           const Text('👋', style: TextStyle(fontSize: 48)),
           const SizedBox(height: 12),
-          Text('Démarrez la conversation', style: AppTextStyles.h4),
+          const Text('Démarrez la conversation', style: AppTextStyles.h4),
           const SizedBox(height: 6),
           Text('Envoyez un message à $name', style: AppTextStyles.body2.copyWith(color: AppColors.textSecondaryLight)),
         ],
@@ -198,3 +197,6 @@ class _EmptyChat extends StatelessWidget {
     );
   }
 }
+
+
+

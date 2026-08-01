@@ -23,7 +23,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   List<Review> _reviews = [];
   bool _loading = true;
   final _pageController = PageController();
-  int _currentPhoto = 0;
 
   @override
   void initState() {
@@ -46,8 +45,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    if (_property == null) return Scaffold(appBar: AppBar(), body: const Center(child: Text('Logement introuvable')));
+    if (_loading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (_property == null) {
+      return Scaffold(
+          appBar: AppBar(),
+          body: const Center(child: Text('Logement introuvable')));
+    }
 
     final p = _property!;
     final user = context.watch<AuthService>().currentUser;
@@ -64,7 +69,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               padding: const EdgeInsets.all(8),
               child: CircleAvatar(
                 backgroundColor: Colors.white,
-                child: IconButton(icon: const Icon(Icons.arrow_back, size: 20), onPressed: () => context.pop()),
+                child: IconButton(
+                    icon: const Icon(Icons.arrow_back, size: 20),
+                    onPressed: () => context.pop()),
               ),
             ),
             actions: [
@@ -72,14 +79,18 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 padding: const EdgeInsets.all(8),
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
-                  child: IconButton(icon: const Icon(Icons.share_outlined, size: 20), onPressed: () {}),
+                  child: IconButton(
+                      icon: const Icon(Icons.share_outlined, size: 20),
+                      onPressed: () {}),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
-                  child: IconButton(icon: const Icon(Icons.favorite_border, size: 20), onPressed: () {}),
+                  child: IconButton(
+                      icon: const Icon(Icons.favorite_border, size: 20),
+                      onPressed: () {}),
                 ),
               ),
             ],
@@ -89,29 +100,43 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   PageView.builder(
                     controller: _pageController,
                     itemCount: p.photoUrls.isEmpty ? 1 : p.photoUrls.length,
-                    onPageChanged: (i) => setState(() => _currentPhoto = i),
                     itemBuilder: (_, i) => p.photoUrls.isNotEmpty
-                        ? CachedNetworkImage(imageUrl: p.photoUrls[i], fit: BoxFit.cover, width: double.infinity)
-                        : Container(color: AppColors.primaryLight, child: const Center(child: Text('🏠', style: TextStyle(fontSize: 80)))),
+                        ? CachedNetworkImage(
+                            imageUrl: p.photoUrls[i],
+                            fit: BoxFit.cover,
+                            width: double.infinity)
+                        : Container(
+                            color: AppColors.primaryLight,
+                            child: const Center(
+                                child: Text('🏠',
+                                    style: TextStyle(fontSize: 80)))),
                   ),
                   if (p.photoUrls.length > 1)
                     Positioned(
-                      bottom: 16, left: 0, right: 0,
+                      bottom: 16,
+                      left: 0,
+                      right: 0,
                       child: Center(
                         child: SmoothPageIndicator(
                           controller: _pageController,
                           count: p.photoUrls.length,
-                          effect: const WormEffect(dotHeight: 6, dotWidth: 6, activeDotColor: Colors.white, dotColor: Colors.white54),
+                          effect: const WormEffect(
+                              dotHeight: 6,
+                              dotWidth: 6,
+                              activeDotColor: Colors.white,
+                              dotColor: Colors.white54),
                         ),
                       ),
                     ),
                   if (p.tour360Urls.isNotEmpty)
                     Positioned(
-                      bottom: 16, right: 16,
+                      bottom: 16,
+                      right: 16,
                       child: GestureDetector(
                         onTap: () => context.push('/property/${p.id}/tour'),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color: AppColors.primary,
                             borderRadius: BorderRadius.circular(20),
@@ -119,9 +144,15 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.threesixty, color: Colors.white, size: 16),
+                              Icon(Icons.threesixty,
+                                  color: Colors.white, size: 16),
                               SizedBox(width: 6),
-                              Text('Visite 360°', style: TextStyle(color: Colors.white, fontSize: 12, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+                              Text('Visite 360°',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w600)),
                             ],
                           ),
                         ),
@@ -142,23 +173,38 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(color: AppColors.primaryLight, borderRadius: BorderRadius.circular(6)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                            color: AppColors.primaryLight,
+                            borderRadius: BorderRadius.circular(6)),
                         child: Text(p.type.name.toUpperCase(),
-                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.primary, fontFamily: 'Poppins')),
+                            style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primary,
+                                fontFamily: 'Poppins')),
                       ),
                       const SizedBox(width: 8),
                       if (p.isCertified) BadgeChip.certified(),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: p.isAvailable ? AppColors.success.withOpacity(0.1) : AppColors.error.withOpacity(0.1),
+                          color: p.isAvailable
+                              ? AppColors.success.withValues(alpha: 0.1)
+                              : AppColors.error.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(p.isAvailable ? '✓ Disponible' : '✗ Occupé',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, fontFamily: 'Poppins',
-                            color: p.isAvailable ? AppColors.success : AppColors.error)),
+                            style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Poppins',
+                                color: p.isAvailable
+                                    ? AppColors.success
+                                    : AppColors.error)),
                       ),
                     ],
                   ),
@@ -166,10 +212,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   Text(p.title, style: AppTextStyles.h3),
                   const SizedBox(height: 6),
                   Row(children: [
-                    const Icon(Icons.location_on, size: 16, color: AppColors.textSecondaryLight),
+                    const Icon(Icons.location_on,
+                        size: 16, color: AppColors.textSecondaryLight),
                     const SizedBox(width: 4),
                     Text('${p.address}, ${p.district}, ${p.city}',
-                      style: AppTextStyles.body2.copyWith(color: AppColors.textSecondaryLight)),
+                        style: AppTextStyles.body2
+                            .copyWith(color: AppColors.textSecondaryLight)),
                   ]),
                   const SizedBox(height: 16),
 
@@ -182,12 +230,17 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.monetization_on, color: AppColors.primary),
+                        const Icon(Icons.monetization_on,
+                            color: AppColors.primary),
                         const SizedBox(width: 10),
-                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text('Loyer mensuel', style: AppTextStyles.caption.copyWith(color: AppColors.primary)),
-                          Text(p.priceLabel, style: AppTextStyles.price),
-                        ]),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Loyer mensuel',
+                                  style: AppTextStyles.caption
+                                      .copyWith(color: AppColors.primary)),
+                              Text(p.priceLabel, style: AppTextStyles.price),
+                            ]),
                       ],
                     ),
                   ),
@@ -195,40 +248,61 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
                   // Stats
                   Row(children: [
-                    _StatItem(icon: Icons.bed_outlined, value: '${p.bedrooms}', label: 'Chambres'),
-                    _StatItem(icon: Icons.bathtub_outlined, value: '${p.bathrooms}', label: 'Salles de bain'),
-                    _StatItem(icon: Icons.square_foot, value: '${p.surface.toInt()}', label: 'm²'),
+                    _StatItem(
+                        icon: Icons.bed_outlined,
+                        value: '${p.bedrooms}',
+                        label: 'Chambres'),
+                    _StatItem(
+                        icon: Icons.bathtub_outlined,
+                        value: '${p.bathrooms}',
+                        label: 'Salles de bain'),
+                    _StatItem(
+                        icon: Icons.square_foot,
+                        value: '${p.surface.toInt()}',
+                        label: 'm²'),
                   ]),
                   const SizedBox(height: 20),
 
                   // Description
-                  Text('Description', style: AppTextStyles.h4),
+                  const Text('Description', style: AppTextStyles.h4),
                   const SizedBox(height: 8),
-                  Text(p.description, style: AppTextStyles.body2.copyWith(height: 1.6,
-                    color: Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight)),
+                  Text(p.description,
+                      style: AppTextStyles.body2.copyWith(
+                          height: 1.6,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondaryLight)),
                   const SizedBox(height: 20),
 
                   // Amenities
                   if (p.amenities.isNotEmpty) ...[
-                    Text('Équipements', style: AppTextStyles.h4),
+                    const Text('Équipements', style: AppTextStyles.h4),
                     const SizedBox(height: 12),
                     Wrap(
-                      spacing: 8, runSpacing: 8,
-                      children: p.amenities.map((a) => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark ? AppColors.surfaceDark : Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.borderLight),
-                        ),
-                        child: Text(a, style: AppTextStyles.caption),
-                      )).toList(),
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: p.amenities
+                          .map((a) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? AppColors.surfaceDark
+                                      : Colors.grey.shade50,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border:
+                                      Border.all(color: AppColors.borderLight),
+                                ),
+                                child: Text(a, style: AppTextStyles.caption),
+                              ))
+                          .toList(),
                     ),
                     const SizedBox(height: 20),
                   ],
 
                   // Owner
-                  Text('Propriétaire', style: AppTextStyles.h4),
+                  const Text('Propriétaire', style: AppTextStyles.h4),
                   const SizedBox(height: 12),
                   GestureDetector(
                     onTap: () {},
@@ -243,23 +317,37 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         children: [
                           CircleAvatar(
                             radius: 24,
-                            backgroundImage: p.ownerPhotoUrl != null ? NetworkImage(p.ownerPhotoUrl!) : null,
+                            backgroundImage: p.ownerPhotoUrl != null
+                                ? NetworkImage(p.ownerPhotoUrl!)
+                                : null,
                             backgroundColor: AppColors.primaryLight,
-                            child: p.ownerPhotoUrl == null ? Text(p.ownerName[0], style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)) : null,
+                            child: p.ownerPhotoUrl == null
+                                ? Text(p.ownerName[0],
+                                    style: const TextStyle(
+                                        color: AppColors.primary,
+                                        fontWeight: FontWeight.bold))
+                                : null,
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(p.ownerName, style: AppTextStyles.label),
-                              Row(children: [
-                                if (p.ownerVerified) ...[BadgeChip.verified(), const SizedBox(width: 6)],
-                                if (p.ownerTrusted) BadgeChip.trusted(),
-                              ]),
-                            ]),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(p.ownerName, style: AppTextStyles.label),
+                                  Row(children: [
+                                    if (p.ownerVerified) ...[
+                                      BadgeChip.verified(),
+                                      const SizedBox(width: 6)
+                                    ],
+                                    if (p.ownerTrusted) BadgeChip.trusted(),
+                                  ]),
+                                ]),
                           ),
                           IconButton(
-                            onPressed: () => context.push('/chat/${p.ownerId}', extra: {'name': p.ownerName}),
-                            icon: const Icon(Icons.chat_bubble_outline, color: AppColors.primary),
+                            onPressed: () => context.push('/chat/${p.ownerId}',
+                                extra: {'name': p.ownerName}),
+                            icon: const Icon(Icons.chat_bubble_outline,
+                                color: AppColors.primary),
                           ),
                         ],
                       ),
@@ -270,12 +358,17 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   // Reviews
                   if (_reviews.isNotEmpty) ...[
                     Row(children: [
-                      Text('Avis (${_reviews.length})', style: AppTextStyles.h4),
+                      Text('Avis (${_reviews.length})',
+                          style: AppTextStyles.h4),
                       const SizedBox(width: 10),
-                      RatingBarIndicator(rating: p.rating, itemSize: 16,
-                        itemBuilder: (_, __) => const Icon(Icons.star, color: Colors.amber)),
+                      RatingBarIndicator(
+                          rating: p.rating,
+                          itemSize: 16,
+                          itemBuilder: (_, __) =>
+                              const Icon(Icons.star, color: Colors.amber)),
                       const SizedBox(width: 4),
-                      Text(p.rating.toStringAsFixed(1), style: AppTextStyles.label),
+                      Text(p.rating.toStringAsFixed(1),
+                          style: AppTextStyles.label),
                     ]),
                     const SizedBox(height: 12),
                     ..._reviews.take(3).map((r) => _ReviewTile(review: r)),
@@ -288,33 +381,45 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: isOwner ? null : Container(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 20, offset: const Offset(0, -4))],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () => context.push('/chat/${p.ownerId}', extra: {'name': p.ownerName}),
-                icon: const Icon(Icons.chat_bubble_outline, size: 18),
-                label: const Text('Contacter'),
+      bottomNavigationBar: isOwner
+          ? null
+          : Container(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 20,
+                      offset: const Offset(0, -4))
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.push('/chat/${p.ownerId}',
+                          extra: {'name': p.ownerName}),
+                      icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                      label: const Text('Contacter'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton.icon(
+                      onPressed: p.isAvailable
+                          ? () => context.push('/booking/${p.id}')
+                          : null,
+                      icon: const Icon(Icons.calendar_today, size: 18),
+                      label: Text(p.reservationMode == ReservationMode.immediate
+                          ? 'Réserver maintenant'
+                          : 'Envoyer une demande'),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              flex: 2,
-              child: ElevatedButton.icon(
-                onPressed: p.isAvailable ? () => context.push('/booking/${p.id}') : null,
-                icon: const Icon(Icons.calendar_today, size: 18),
-                label: Text(p.reservationMode == ReservationMode.immediate ? 'Réserver maintenant' : 'Envoyer une demande'),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -324,7 +429,8 @@ class _StatItem extends StatelessWidget {
   final String value;
   final String label;
 
-  const _StatItem({required this.icon, required this.value, required this.label});
+  const _StatItem(
+      {required this.icon, required this.value, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -333,7 +439,9 @@ class _StatItem extends StatelessWidget {
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark ? AppColors.surfaceDark : Colors.grey.shade50,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.surfaceDark
+              : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.borderLight),
         ),
@@ -342,7 +450,9 @@ class _StatItem extends StatelessWidget {
             Icon(icon, size: 20, color: AppColors.primary),
             const SizedBox(height: 4),
             Text(value, style: AppTextStyles.h4),
-            Text(label, style: AppTextStyles.caption.copyWith(color: AppColors.textSecondaryLight)),
+            Text(label,
+                style: AppTextStyles.caption
+                    .copyWith(color: AppColors.textSecondaryLight)),
           ],
         ),
       ),
@@ -366,15 +476,26 @@ class _ReviewTile extends StatelessWidget {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          CircleAvatar(radius: 16, backgroundColor: AppColors.primaryLight,
-            child: Text(review.authorName[0], style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold))),
+          CircleAvatar(
+              radius: 16,
+              backgroundColor: AppColors.primaryLight,
+              child: Text(review.authorName[0],
+                  style: const TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold))),
           const SizedBox(width: 8),
           Expanded(child: Text(review.authorName, style: AppTextStyles.label)),
-          RatingBarIndicator(rating: review.rating, itemSize: 14,
-            itemBuilder: (_, __) => const Icon(Icons.star, color: Colors.amber)),
+          RatingBarIndicator(
+              rating: review.rating,
+              itemSize: 14,
+              itemBuilder: (_, __) =>
+                  const Icon(Icons.star, color: Colors.amber)),
         ]),
         const SizedBox(height: 8),
-        Text(review.comment, style: AppTextStyles.body2.copyWith(color: AppColors.textSecondaryLight, height: 1.4)),
+        Text(review.comment,
+            style: AppTextStyles.body2
+                .copyWith(color: AppColors.textSecondaryLight, height: 1.4)),
       ]),
     );
   }

@@ -52,7 +52,7 @@ class _ContractScreenState extends State<ContractScreen> {
       content: Column(mainAxisSize: MainAxisSize.min, children: [
         const Text('🎉', style: TextStyle(fontSize: 64)),
         const SizedBox(height: 16),
-        Text('Contrat signé !', style: AppTextStyles.h3, textAlign: TextAlign.center),
+        const Text('Contrat signé !', style: AppTextStyles.h3, textAlign: TextAlign.center),
         const SizedBox(height: 8),
         Text('Félicitations ! Votre contrat de location a été signé avec succès.',
           textAlign: TextAlign.center, style: AppTextStyles.body2.copyWith(color: AppColors.textSecondaryLight)),
@@ -103,7 +103,7 @@ class _ContractScreenState extends State<ContractScreen> {
                   _ContractSection(title: 'Fréquence', content: _reservation?['paymentFrequency'] == 'monthly' ? 'Mensuel' : 'Annuel'),
 
                   const Divider(height: 32),
-                  Text('Conditions générales', style: AppTextStyles.h4),
+                  const Text('Conditions générales', style: AppTextStyles.h4),
                   const SizedBox(height: 12),
                   _contractText(),
                   const SizedBox(height: 24),
@@ -124,7 +124,7 @@ class _ContractScreenState extends State<ContractScreen> {
                           child: _accepted ? const Icon(Icons.check, size: 16, color: Colors.white) : null,
                         ),
                         const SizedBox(width: 12),
-                        Expanded(
+                        const Expanded(
                           child: Text('J\'ai lu et j\'accepte les conditions générales du contrat de location.',
                             style: AppTextStyles.body2),
                         ),
