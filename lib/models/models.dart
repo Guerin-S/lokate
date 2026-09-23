@@ -1,19 +1,4 @@
-// Stub Firestore pour build offline sans Firebase
-class Timestamp {
-  final DateTime _date;
-  const Timestamp._(this._date);
-  factory Timestamp.fromDate(DateTime date) => Timestamp._(date);
-  DateTime toDate() => _date;
-  static Timestamp now() => Timestamp._(DateTime.now());
-}
-
-class DocumentSnapshot {
-  final String id;
-  final Map<String, dynamic> _data;
-  DocumentSnapshot(this.id, this._data);
-  dynamic get data => _data;
-  bool get exists => true;
-}
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 DateTime _parseDate(dynamic v) {
   if (v == null) return DateTime.now();
