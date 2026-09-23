@@ -1,15 +1,39 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Stub Firestore pour build offline sans Firebase
+class Timestamp {
+  final DateTime _date;
+  const Timestamp._(this._date);
+  factory Timestamp.fromDate(DateTime date) => Timestamp._(date);
+  DateTime toDate() => _date;
+  static Timestamp now() => Timestamp._(DateTime.now());
+}
+
+class DocumentSnapshot {
+  final String id;
+  final Map<String, dynamic> _data;
+  DocumentSnapshot(this.id, this._data);
+  dynamic get data => _data;
+  bool get exists => true;
+}
+
+DateTime _parseDate(dynamic v) {
+  if (v == null) return DateTime.now();
+  if (v is Timestamp) return v.toDate();
+  if (v is DateTime) return v;
+  if (v is String) return DateTime.tryParse(v) ?? DateTime.now();
+  return DateTime.now();
+}
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
 enum UserRole { locataire, proprietaire }
-enum PropertyType { appartement, studio, villa, chambre, autre }
+enum PropertyType { appartement, studio, villa, chambre, maison, duplex, terrain, bureau, commerce, autre }
 enum PriceDisplay { exact, range }
 enum ReservationMode { immediate, approval }
 enum PaymentMethod { mtnMomo, orangeMoney, stripe }
 enum PaymentFrequency { monthly, yearly }
 enum ReservationStatus { pending, approved, rejected, active, completed, cancelled }
 enum ContractStatus { draft, signed, active, terminated }
+enum SubscriptionTier { gratuit, decouverte, pro, premium }
 
 // ─── User ────────────────────────────────────────────────────────────────────
 
@@ -27,6 +51,8 @@ class AppUser {
   final DateTime createdAt;
   final String? fcmToken;
   final String language; // 'fr' | 'en'
+  final SubscriptionTier subscriptionTier;
+  final DateTime? subscriptionExpiry;
 
   AppUser({
     required this.id,
@@ -42,6 +68,8 @@ class AppUser {
     required this.createdAt,
     this.fcmToken,
     this.language = 'fr',
+    this.subscriptionTier = SubscriptionTier.gratuit,
+    this.subscriptionExpiry,
   });
 
   factory AppUser.fromFirestore(DocumentSnapshot doc) {
@@ -57,9 +85,11 @@ class AppUser {
       isTrusted: data['isTrusted'] ?? false,
       rating: (data['rating'] ?? 0.0).toDouble(),
       ratingCount: data['ratingCount'] ?? 0,
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      createdAt: _parseDate(data['createdAt']),
       fcmToken: data['fcmToken'],
       language: data['language'] ?? 'fr',
+      subscriptionTier: SubscriptionTier.values.firstWhere((e) => e.name == data['subscriptionTier'], orElse: () => SubscriptionTier.gratuit),
+      subscriptionExpiry: data['subscriptionExpiry'] != null ? _parseDate(data['subscriptionExpiry']) : null,
     );
   }
 
@@ -76,6 +106,8 @@ class AppUser {
     'createdAt': Timestamp.fromDate(createdAt),
     'fcmToken': fcmToken,
     'language': language,
+    'subscriptionTier': subscriptionTier.name,
+    'subscriptionExpiry': subscriptionExpiry != null ? Timestamp.fromDate(subscriptionExpiry!) : null,
   };
 }
 
@@ -195,8 +227,8 @@ class Property {
       isCertified: data['isCertified'] ?? false,
       rating: (data['rating'] ?? 0.0).toDouble(),
       ratingCount: data['ratingCount'] ?? 0,
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+      createdAt: _parseDate(data['createdAt']),
+      updatedAt: _parseDate(data['updatedAt']),
     );
   }
 
@@ -279,9 +311,9 @@ class Reservation {
       status: ReservationStatus.values.firstWhere((e) => e.name == data['status'], orElse: () => ReservationStatus.pending),
       paymentFrequency: PaymentFrequency.values.firstWhere((e) => e.name == data['paymentFrequency'], orElse: () => PaymentFrequency.monthly),
       amount: (data['amount'] ?? 0).toDouble(),
-      startDate: (data['startDate'] as Timestamp).toDate(),
-      endDate: data['endDate'] != null ? (data['endDate'] as Timestamp).toDate() : null,
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      startDate: _parseDate(data['startDate']),
+      endDate: data['endDate'] != null ? _parseDate(data['endDate']) : null,
+      createdAt: _parseDate(data['createdAt']),
       message: data['message'],
     );
   }
@@ -319,7 +351,7 @@ class ChatMessage {
       senderPhotoUrl: data['senderPhotoUrl'],
       content: data['content'] ?? '',
       isRead: data['isRead'] ?? false,
-      sentAt: (data['sentAt'] as Timestamp).toDate(),
+      sentAt: _parseDate(data['sentAt']),
       imageUrl: data['imageUrl'],
     );
   }
@@ -371,7 +403,7 @@ class Review {
       targetType: data['targetType'] ?? 'property',
       rating: (data['rating'] ?? 0.0).toDouble(),
       comment: data['comment'] ?? '',
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      createdAt: _parseDate(data['createdAt']),
     );
   }
 }

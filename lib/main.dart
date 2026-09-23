@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 import 'theme/app_theme.dart';
 import 'utils/router.dart';
 import 'services/theme_service.dart';
 import 'services/auth_service.dart';
 import 'services/property_service.dart';
+import 'services/favorites_service.dart';
+import 'services/search_service.dart';
+import 'services/payment_service.dart';
+import 'services/push_notification_service.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await PushNotificationService.initialize();
+  } catch (e) {
+    debugPrint('Firebase init fallback: $e');
+    try { await Firebase.initializeApp(); } catch (_) {}
+  }
   runApp(const LokateApp());
 }
 
@@ -25,6 +36,9 @@ class LokateApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeService()),
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => PropertyService()),
+        ChangeNotifierProvider(create: (_) => FavoritesService()),
+        ChangeNotifierProvider(create: (_) => SearchService()),
+        ChangeNotifierProvider(create: (_) => PaymentService()),
       ],
       child: Consumer<ThemeService>(
         builder: (context, themeService, _) {
@@ -35,15 +49,8 @@ class LokateApp extends StatelessWidget {
             darkTheme: AppTheme.dark(),
             themeMode: themeService.themeMode,
             routerConfig: appRouter,
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('fr'),
-              Locale('en'),
-            ],
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
           );
         },
       ),

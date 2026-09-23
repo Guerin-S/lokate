@@ -6,9 +6,12 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../services/property_service.dart';
 import '../../services/auth_service.dart';
+import '../../services/favorites_service.dart';
+import '../../services/share_service.dart';
 import '../../models/models.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/badge_chip.dart';
+import '../../widgets/empty_states.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
   final String propertyId;
@@ -46,12 +49,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: LoadingOverlay(message: 'Chargement du logement...'));
     }
     if (_property == null) {
       return Scaffold(
           appBar: AppBar(),
-          body: const Center(child: Text('Logement introuvable')));
+          body: const ErrorState(title: 'Logement introuvable', subtitle: 'Ce logement a peut-être été supprimé.'));
     }
 
     final p = _property!;
@@ -81,16 +84,25 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   backgroundColor: Colors.white,
                   child: IconButton(
                       icon: const Icon(Icons.share_outlined, size: 20),
-                      onPressed: () {}),
+                      onPressed: () => ShareService.shareProperty(p)),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-                child: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: IconButton(
-                      icon: const Icon(Icons.favorite_border, size: 20),
-                      onPressed: () {}),
+                child: Consumer<FavoritesService>(
+                  builder: (context, favorites, _) {
+                    final isFav = favorites.isFavorite(p.id);
+                    return CircleAvatar(
+                      backgroundColor: isFav ? AppColors.error : Colors.white,
+                      child: IconButton(
+                          icon: Icon(
+                            isFav ? Icons.favorite : Icons.favorite_border,
+                            size: 20,
+                            color: isFav ? Colors.white : null,
+                          ),
+                          onPressed: () => favorites.toggle(p.id)),
+                    );
+                  },
                 ),
               ),
             ],

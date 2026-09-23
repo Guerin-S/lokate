@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/auth_service.dart';
 import '../../services/property_service.dart';
+import '../../services/notification_service.dart';
 import '../../models/models.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/lokate_text_field.dart';
+import '../../widgets/empty_states.dart';
 
 // ─── Review Screen ────────────────────────────────────────────────────────────
 
@@ -144,11 +145,19 @@ class OwnerDashboardScreen extends StatelessWidget {
         ],
       ),
       body: user == null
-          ? const Center(child: CircularProgressIndicator())
+          ? const LoadingOverlay(message: 'Chargement...')
           : FutureBuilder<List<Property>>(
               future:
                   context.read<PropertyService>().getOwnerProperties(user.id),
               builder: (_, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const LoadingOverlay(message: 'Chargement de vos biens...');
+                }
+                if (snapshot.hasError) {
+                  return ErrorState(
+                    onRetry: () {},
+                  );
+                }
                 final properties = snapshot.data ?? [];
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
@@ -197,7 +206,13 @@ class OwnerDashboardScreen extends StatelessWidget {
                       const SizedBox(height: 12),
 
                       if (properties.isEmpty)
-                        _EmptyProperties()
+                        EmptyState(
+                          emoji: '🏘️',
+                          title: 'Aucun bien publié',
+                          subtitle: 'Publiez votre premier logement pour commencer à recevoir des demandes.',
+                          actionLabel: 'Publier un bien',
+                          onAction: () => context.push('/owner/add-property'),
+                        )
                       else
                         ...properties
                             .map((p) => _OwnerPropertyTile(property: p)),
@@ -334,37 +349,52 @@ class _OwnerPropertyTile extends StatelessWidget {
             ),
           ),
           PopupMenuButton<String>(
-            onSelected: (v) {},
+            onSelected: (v) async {
+              if (v == 'edit') {
+                context.push('/owner/edit-property', extra: property);
+              } else if (v == 'toggle') {
+                await context.read<PropertyService>().toggleAvailability(property.id, !property.isAvailable);
+                if (context.mounted) {
+                  NotificationService.showInfo(context, property.isAvailable ? 'Marqué comme occupé' : 'Marqué comme disponible');
+                }
+              } else if (v == 'delete') {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('Supprimer ce bien ?'),
+                    content: const Text('Cette action est irréversible. Toutes les données seront perdues.'),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Supprimer', style: TextStyle(color: AppColors.error))),
+                    ],
+                  ),
+                );
+                if (confirm == true && context.mounted) {
+                  await context.read<PropertyService>().deleteProperty(property.id);
+                  if (context.mounted) {
+                    NotificationService.showSuccess(context, 'Bien supprimé');
+                  }
+                }
+              }
+            },
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'edit', child: Text('Modifier')),
-              const PopupMenuItem(
-                  value: 'toggle', child: Text('Changer disponibilité')),
-              const PopupMenuItem(value: 'delete', child: Text('Supprimer')),
+              const PopupMenuItem(value: 'edit', child: Row(children: [
+                Icon(Icons.edit_outlined, size: 18), SizedBox(width: 8), Text('Modifier'),
+              ])),
+              PopupMenuItem(value: 'toggle', child: Row(children: [
+                Icon(property.isAvailable ? Icons.lock_outline : Icons.lock_open_outlined, size: 18),
+                const SizedBox(width: 8),
+                Text(property.isAvailable ? 'Marquer occupé' : 'Marquer disponible'),
+              ])),
+              const PopupMenuItem(value: 'delete', child: Row(children: [
+                Icon(Icons.delete_outline, size: 18, color: AppColors.error),
+                SizedBox(width: 8),
+                Text('Supprimer', style: TextStyle(color: AppColors.error)),
+              ])),
             ],
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmptyProperties extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        children: [
-          const Text('🏘️', style: TextStyle(fontSize: 56)),
-          const SizedBox(height: 16),
-          const Text('Aucun bien publié',
-              style: AppTextStyles.h4, textAlign: TextAlign.center),
-          const SizedBox(height: 8),
-          Text(
-              'Publiez votre premier logement pour commencer à recevoir des demandes.',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.body2
-                  .copyWith(color: AppColors.textSecondaryLight)),
         ],
       ),
     );
@@ -378,45 +408,21 @@ class OwnerReservationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthService>().currentUser;
-
     return Scaffold(
       appBar: AppBar(title: const Text('Demandes de location')),
-      body: user == null
-          ? const Center(child: CircularProgressIndicator())
-          : StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('reservations')
-                  .where('ownerId', isEqualTo: user.id)
-                  .orderBy('createdAt', descending: true)
-                  .snapshots(),
-              builder: (_, snapshot) {
-                final docs = snapshot.data?.docs ?? [];
-                if (docs.isEmpty) {
-                  return const Center(
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Text('📋', style: TextStyle(fontSize: 56)),
-                    SizedBox(height: 16),
-                    Text('Aucune demande',
-                        style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600)),
-                  ]));
-                }
-                return ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: docs.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (_, i) {
-                    final data = docs[i].data() as Map<String, dynamic>;
-                    final status = data['status'] as String;
-                    return _ReservationTile(
-                        data: data, docId: docs[i].id, status: status);
-                  },
-                );
-              },
-            ),
+      body: const Center(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Text('📋', style: TextStyle(fontSize: 56)),
+        SizedBox(height: 16),
+        Text('Aucune demande',
+            style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 18,
+                fontWeight: FontWeight.w600)),
+        SizedBox(height: 8),
+        Text('Les demandes de vos locataires apparaîtront ici.',
+            style: TextStyle(fontFamily: 'Poppins', fontSize: 13, color: Color(0xFF6B7C8D))),
+      ])),
     );
   }
 }
@@ -512,10 +518,7 @@ class _ReservationTile extends StatelessWidget {
             Row(children: [
               Expanded(
                   child: OutlinedButton(
-                onPressed: () => FirebaseFirestore.instance
-                    .collection('reservations')
-                    .doc(docId)
-                    .update({'status': 'rejected'}),
+                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Demande refusée (démo)'))),
                 style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: AppColors.error),
                     foregroundColor: AppColors.error,
@@ -525,10 +528,7 @@ class _ReservationTile extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                   child: ElevatedButton(
-                onPressed: () => FirebaseFirestore.instance
-                    .collection('reservations')
-                    .doc(docId)
-                    .update({'status': 'approved'}),
+                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Demande approuvée (démo)'))),
                 style: ElevatedButton.styleFrom(minimumSize: const Size(0, 38)),
                 child: const Text('Approuver'),
               )),

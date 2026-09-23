@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 
@@ -13,91 +12,51 @@ class ChatListScreen extends StatelessWidget {
     final user = context.watch<AuthService>().currentUser;
     if (user == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
+    // Mock chats — mode démo
+    final mockChats = [
+      {'id': 'chat1', 'name': 'Proprio Douala', 'lastMessage': 'Bonjour, le logement est toujours disponible ?', 'time': '10:30'},
+      {'id': 'chat2', 'name': 'Marie K.', 'lastMessage': 'Merci pour la visite !', 'time': 'Hier'},
+    ];
+
     return Scaffold(
       appBar: AppBar(title: const Text('Messages')),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('chats')
-            .where('participants', arrayContains: user.id)
-            .orderBy('lastMessageAt', descending: true)
-            .snapshots(),
-        builder: (_, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final docs = snapshot.data?.docs ?? [];
-          if (docs.isEmpty) return _EmptyChats();
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: docs.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (_, i) {
-              final data = docs[i].data() as Map<String, dynamic>;
-              final otherName = data['participantNames']?[data['participants'].indexOf(
-                data['participants'].firstWhere((p) => p != user.id, orElse: () => '')
-              )] ?? 'Utilisateur';
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: AppColors.primaryLight,
-                  child: Text(otherName.isNotEmpty ? otherName[0] : '?',
-                    style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
-                ),
-                title: Text(otherName, style: AppTextStyles.label),
-                subtitle: Text(data['lastMessage'] ?? '', style: AppTextStyles.caption.copyWith(color: AppColors.textSecondaryLight),
-                  maxLines: 1, overflow: TextOverflow.ellipsis),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (data['lastMessageAt'] != null)
-                      Text(_timeAgo((data['lastMessageAt'] as Timestamp).toDate()),
-                        style: AppTextStyles.caption.copyWith(color: AppColors.textSecondaryLight)),
-                    if ((data['unreadCount_${user.id}'] ?? 0) > 0) ...[
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                        child: Text('${data['unreadCount_${user.id}']}',
-                          style: const TextStyle(color: Colors.white, fontSize: 10, fontFamily: 'Poppins')),
-                      ),
-                    ],
-                  ],
-                ),
-                onTap: () => context.push('/chat/${docs[i].id}', extra: {'name': otherName}),
-              );
-            },
-          );
-        },
-      ),
+      body: mockChats.isEmpty
+          ? const _EmptyChats()
+          : ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: mockChats.length,
+              separatorBuilder: (_, __) => const Divider(height: 1),
+              itemBuilder: (_, i) {
+                final chat = mockChats[i];
+                return ListTile(
+                  leading: CircleAvatar(backgroundColor: AppColors.primaryLight, child: Text(chat['name']![0], style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700))),
+                  title: Text(chat['name']!, style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600)),
+                  subtitle: Text(chat['lastMessage']!, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.textSecondaryLight), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  trailing: Text(chat['time']!, style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.textTertiaryLight)),
+                  onTap: () => context.push('/chat/${chat['id']}', extra: {'name': chat['name']}),
+                );
+              },
+            ),
     );
-  }
-
-  String _timeAgo(DateTime dt) {
-    final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'maintenant';
-    if (diff.inHours < 1) return '${diff.inMinutes}min';
-    if (diff.inDays < 1) return '${diff.inHours}h';
-    return '${diff.inDays}j';
   }
 }
 
 class _EmptyChats extends StatelessWidget {
+  const _EmptyChats();
+
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('💬', style: TextStyle(fontSize: 64)),
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Container(width: 80, height: 80, decoration: BoxDecoration(color: AppColors.primaryLight, borderRadius: BorderRadius.circular(20)), child: const Icon(Icons.chat_bubble_outline, size: 40, color: AppColors.primary)),
           const SizedBox(height: 16),
-          const Text('Aucun message', style: AppTextStyles.h4),
+          const Text('Aucun message', style: TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimaryLight)),
           const SizedBox(height: 8),
-          Text('Contactez un propriétaire pour démarrer une conversation.',
-            textAlign: TextAlign.center,
-            style: AppTextStyles.body2.copyWith(color: AppColors.textSecondaryLight)),
-        ],
+          const Text('Contactez un propriétaire pour démarrer une conversation.', textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Poppins', fontSize: 13, color: AppColors.textSecondaryLight)),
+        ]),
       ),
     );
   }
 }
-

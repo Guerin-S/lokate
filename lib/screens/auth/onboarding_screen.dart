@@ -15,34 +15,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _controller = PageController();
   int _currentPage = 0;
 
-  final List<_OnboardingPage> _pages = [
-    const _OnboardingPage(
-      emoji: '🔍',
-      title: 'Trouvez votre logement',
-      titleEn: 'Find your home',
-      subtitle: 'Parcourez des centaines d\'appartements, studios et villas à Douala et Yaoundé depuis votre téléphone.',
-      color: AppColors.primary,
+  final List<_OnboardingPage> _pages = const [
+    _OnboardingPage(
+      icon: Icons.map_rounded,
+      title: 'Tout le Cameroun',
+      subtitle: '10 régions, 50+ villes. De Douala à Maroua, trouvez votre logement partout au Cameroun depuis votre téléphone.',
+      features: ['Yaoundé • Douala • Bafoussam', 'Garoua • Bamenda • Buea', '10 régions couvertes'],
     ),
-    const _OnboardingPage(
-      emoji: '🎥',
-      title: 'Visite virtuelle 360°',
-      titleEn: 'Virtual 360° tour',
-      subtitle: 'Visitez chaque pièce en détail sans bouger de chez vous grâce à notre galerie interactive 360°.',
-      color: AppColors.accent,
+    _OnboardingPage(
+      icon: Icons.view_in_ar_rounded,
+      title: 'Visite 360° immersive',
+      subtitle: 'Photos HD et visite virtuelle pour chaque bien. Visitez sans vous déplacer, comme si vous y étiez.',
+      features: ['Photos HD', 'Visite 360°', 'Tout type : villa, terrain, bureau...'],
     ),
-    const _OnboardingPage(
-      emoji: '📱',
-      title: 'Payez en Mobile Money',
-      titleEn: 'Pay with Mobile Money',
-      subtitle: 'MTN MoMo, Orange Money ou carte bancaire — choisissez le mode de paiement qui vous convient.',
-      color: Color(0xFF10B981),
+    _OnboardingPage(
+      icon: Icons.payments_rounded,
+      title: 'Payez & signez en ligne',
+      subtitle: 'MTN MoMo, Orange Money, carte. Contrat digital signé en 2 minutes. 100% sécurisé.',
+      features: ['MTN MoMo • Orange Money', 'Contrat en ligne', 'Paiement sécurisé'],
     ),
-    const _OnboardingPage(
-      emoji: '🔑',
-      title: 'Signez en ligne',
-      titleEn: 'Sign online',
-      subtitle: 'Contrat signé, clés récupérées — tout se fait sans paperasse inutile.',
-      color: Color(0xFF8B5CF6),
+    _OnboardingPage(
+      icon: Icons.workspace_premium_rounded,
+      title: 'Devenez propriétaire Pro',
+      subtitle: 'Publiez en illimité, badge vérifié, top recherche. Abonnement dès 5 000 FCFA/mois.',
+      features: ['Dès 5 000 FCFA/mois', 'Badge Vérifié & Premium', 'Support dédié'],
     ),
   ];
 
@@ -62,32 +58,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           PageView.builder(
             controller: _controller,
             onPageChanged: (i) => setState(() => _currentPage = i),
             itemCount: _pages.length,
-            itemBuilder: (_, i) => _buildPage(_pages[i]),
+            itemBuilder: (_, i) => _buildPage(_pages[i], isDark),
           ),
+          // Skip
           Positioned(
-            top: 50,
-            right: 20,
+            top: 52,
+            right: 16,
             child: TextButton(
               onPressed: _finish,
-              child: Text(
-                'Passer',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  color: _pages[_currentPage].color,
-                  fontWeight: FontWeight.w600,
-                ),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.textSecondaryLight,
+                backgroundColor: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               ),
+              child: const Text('Passer', style: TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w600)),
             ),
           ),
+          // Bottom
           Positioned(
-            bottom: 60,
+            bottom: 40,
             left: 0,
             right: 0,
             child: Column(
@@ -96,25 +95,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   controller: _controller,
                   count: _pages.length,
                   effect: ExpandingDotsEffect(
-                    activeDotColor: _pages[_currentPage].color,
-                    dotColor: Colors.grey.shade300,
-                    dotHeight: 8,
-                    dotWidth: 8,
-                    expansionFactor: 3,
+                    activeDotColor: AppColors.gold,
+                    dotColor: AppColors.borderLight,
+                    dotHeight: 6,
+                    dotWidth: 6,
+                    expansionFactor: 3.5,
+                    spacing: 6,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: ElevatedButton(
-                    onPressed: _next,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _pages[_currentPage].color,
-                    ),
-                    child: Text(
-                      _currentPage == _pages.length - 1 ? 'Commencer' : 'Suivant',
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _next,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: Text(
+                        _currentPage == _pages.length - 1 ? 'Commencer  →' : 'Suivant',
+                        style: const TextStyle(fontFamily: 'Poppins', fontSize: 15, fontWeight: FontWeight.w700),
+                      ),
                     ),
                   ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '${_currentPage + 1} / ${_pages.length}',
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.textTertiaryLight, letterSpacing: 1),
                 ),
               ],
             ),
@@ -124,47 +136,62 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildPage(_OnboardingPage page) {
-    return Container(
-      color: Colors.white,
+  Widget _buildPage(_OnboardingPage page, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 90, 24, 140),
       child: Column(
         children: [
-          Expanded(
-            flex: 3,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: page.color.withValues(alpha:0.1),
-              ),
-              child: Center(
-                child: Text(page.emoji, style: const TextStyle(fontSize: 100)),
-              ),
+          // Icon premium
+          Container(
+            width: 110,
+            height: 110,
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.surfaceDark : AppColors.primary.withValues(alpha: 0.07),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: AppColors.gold.withValues(alpha: 0.18), width: 1),
+            ),
+            child: Icon(page.icon, size: 52, color: AppColors.gold),
+          ),
+          const SizedBox(height: 28),
+          // Gold line
+          Container(width: 40, height: 3, decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(2))),
+          const SizedBox(height: 20),
+          Text(
+            page.title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white : AppColors.primary,
+              letterSpacing: -0.7,
+              height: 1.2,
             ),
           ),
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(32),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    page.title,
-                    style: AppTextStyles.h2.copyWith(color: AppColors.textPrimaryLight),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    page.subtitle,
-                    style: AppTextStyles.body1.copyWith(
-                      color: AppColors.textSecondaryLight,
-                      height: 1.5,
-                    ),
-                  ),
-                ],
-              ),
+          const SizedBox(height: 14),
+          Text(
+            page.subtitle,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+              height: 1.6,
             ),
           ),
-          const SizedBox(height: 120),
+          const SizedBox(height: 24),
+          ...page.features.map((f) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(width: 6, height: 6, decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle)),
+                    const SizedBox(width: 8),
+                    Text(f, style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight)),
+                  ],
+                ),
+              )),
         ],
       ),
     );
@@ -172,19 +199,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 }
 
 class _OnboardingPage {
-  final String emoji;
+  final IconData icon;
   final String title;
-  final String titleEn;
   final String subtitle;
-  final Color color;
+  final List<String> features;
 
   const _OnboardingPage({
-    required this.emoji,
+    required this.icon,
     required this.title,
-    required this.titleEn,
     required this.subtitle,
-    required this.color,
+    required this.features,
   });
 }
-
-

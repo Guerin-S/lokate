@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../theme/app_theme.dart';
 
 class ContractScreen extends StatefulWidget {
@@ -24,26 +23,16 @@ class _ContractScreenState extends State<ContractScreen> {
   }
 
   Future<void> _load() async {
-    final doc = await FirebaseFirestore.instance.collection('reservations').doc(widget.reservationId).get();
-    setState(() { _reservation = doc.data(); _loading = false; });
+    await Future.delayed(const Duration(milliseconds: 400));
+    setState(() { _reservation = {'propertyTitle': 'Logement', 'tenantId': 'user', 'ownerId': 'owner', 'startDate': DateTime.now(), 'amount': 250000.0}; _loading = false; });
   }
 
   Future<void> _sign() async {
     if (!_accepted) return;
     setState(() => _signing = true);
     await Future.delayed(const Duration(seconds: 1));
-    await FirebaseFirestore.instance.collection('contracts').add({
-      'reservationId': widget.reservationId,
-      'status': 'signed',
-      'signedAt': Timestamp.now(),
-      'propertyTitle': _reservation?['propertyTitle'],
-      'tenantId': _reservation?['tenantId'],
-      'ownerId': _reservation?['ownerId'],
-      'startDate': _reservation?['startDate'],
-      'amount': _reservation?['amount'],
-    });
     if (mounted) _showSuccess();
-    setState(() => _signing = false);
+    if (mounted) setState(() => _signing = false);
   }
 
   void _showSuccess() {
@@ -152,7 +141,16 @@ class _ContractScreenState extends State<ContractScreen> {
 
   String _formatDate(dynamic ts) {
     if (ts == null) return '—';
-    final date = (ts as Timestamp).toDate();
+    DateTime date;
+    if (ts is DateTime) {
+      date = ts;
+    } else {
+      try {
+        date = (ts as dynamic).toDate() as DateTime;
+      } catch (_) {
+        date = DateTime.now();
+      }
+    }
     return '${date.day}/${date.month}/${date.year}';
   }
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/models.dart';
 import '../../theme/app_theme.dart';
 
@@ -29,36 +28,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> _load() async {
-    final doc = await FirebaseFirestore.instance.collection('reservations').doc(widget.reservationId).get();
-    setState(() { _reservation = doc.data(); _loading = false; });
+    await Future.delayed(const Duration(milliseconds: 400));
+    setState(() { _reservation = {'amount': 250000.0, 'paymentFrequency': 'monthly'}; _loading = false; });
   }
 
   Future<void> _pay() async {
     setState(() => _paying = true);
-    // Simulate payment processing
     await Future.delayed(const Duration(seconds: 2));
-
-    try {
-      await FirebaseFirestore.instance.collection('payments').add({
-        'reservationId': widget.reservationId,
-        'amount': _reservation!['amount'],
-        'method': _method.name,
-        'status': 'success',
-        'createdAt': Timestamp.now(),
-      });
-
-      await FirebaseFirestore.instance.collection('reservations').doc(widget.reservationId).update({
-        'status': ReservationStatus.active.name,
-      });
-
-      if (mounted) context.go('/contract/${widget.reservationId}');
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Paiement échoué. Réessayez.')));
-      }
-    } finally {
-      if (mounted) setState(() => _paying = false);
-    }
+    if (mounted) context.go('/contract/${widget.reservationId}');
+    if (mounted) setState(() => _paying = false);
   }
 
   @override

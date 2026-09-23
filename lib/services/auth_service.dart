@@ -1,144 +1,113 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/models.dart';
 
+/// AuthService — Mode démo offline 100% (sans Firebase)
+/// Réactiver Firebase en décommentant les dépendances dans pubspec.yaml
+/// et en restaurant l'implémentation Firebase complète
 class AuthService extends ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  static const String _demoUsersKey = 'lokate_demo_users';
+  static const String _demoSessionKey = 'lokate_demo_session';
 
   AppUser? _currentUser;
   AppUser? get currentUser => _currentUser;
-  User? get firebaseUser => _auth.currentUser;
-  bool get isLoggedIn => _auth.currentUser != null;
+  bool get isLoggedIn => _currentUser != null;
+  bool get isDemoMode => true;
 
   AuthService() {
-    _auth.authStateChanges().listen(_onAuthStateChanged);
+    _restoreDemoSession();
   }
 
-  Future<void> _onAuthStateChanged(User? user) async {
+  Future<void> _restoreDemoSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString(_demoSessionKey);
+    if (email == null || email.isEmpty) return;
+    final user = await _getStoredDemoUser(email);
     if (user != null) {
-      await _loadUserData(user.uid);
-    } else {
-      _currentUser = null;
+      _currentUser = user;
+      notifyListeners();
     }
+  }
+
+  Future<AppUser?> _getStoredDemoUser(String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    final users = prefs.getStringList(_demoUsersKey) ?? <String>[];
+    for (final raw in users) {
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+      if ((data['email'] as String?) == email) {
+        final role = UserRole.values.firstWhere((e) => e.name == data['role'], orElse: () => UserRole.locataire);
+        return AppUser(id: email, name: data['name'] ?? 'Utilisateur', email: email, role: role, createdAt: DateTime.now());
+      }
+    }
+    return null;
+  }
+
+  Future<void> _saveDemoUser({required String name, required String email, required String password, required UserRole role}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final users = prefs.getStringList(_demoUsersKey) ?? <String>[];
+    final userMap = {'name': name, 'email': email, 'password': password, 'role': role.name, 'createdAt': DateTime.now().toIso8601String()};
+    final existingIndex = users.indexWhere((raw) {
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+      return (data['email'] as String?) == email;
+    });
+    if (existingIndex >= 0) {
+      users[existingIndex] = jsonEncode(userMap);
+    } else {
+      users.add(jsonEncode(userMap));
+    }
+    await prefs.setStringList(_demoUsersKey, users);
+    await prefs.setString(_demoSessionKey, email);
+    _currentUser = AppUser(id: email, name: name, email: email, role: role, createdAt: DateTime.now());
     notifyListeners();
   }
 
-  Future<void> _loadUserData(String uid) async {
-    try {
-      final doc = await _db.collection('users').doc(uid).get();
-      if (doc.exists) {
-        _currentUser = AppUser.fromFirestore(doc);
+  Future<bool> registerWithEmail({required String name, required String email, required String password, required UserRole role}) async {
+    await _saveDemoUser(name: name, email: email, password: password, role: role);
+    return true;
+  }
+
+  Future<bool> loginWithEmail(String email, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    final users = prefs.getStringList(_demoUsersKey) ?? <String>[];
+    for (final raw in users) {
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+      if ((data['email'] as String?) == email && (data['password'] as String?) == password) {
+        await prefs.setString(_demoSessionKey, email);
+        _currentUser = AppUser(
+          id: email,
+          name: data['name'] ?? 'Utilisateur',
+          email: email,
+          role: UserRole.values.firstWhere((e) => e.name == data['role'], orElse: () => UserRole.locataire),
+          createdAt: DateTime.now(),
+        );
+        notifyListeners();
+        return true;
       }
-    } catch (e) {
-      debugPrint('Error loading user: $e');
     }
+    return false;
   }
 
-  // ── Email/Password ─────────────────────────────────────────────────────────
-
-  Future<UserCredential> registerWithEmail({
-    required String name,
-    required String email,
-    required String password,
-    required UserRole role,
-  }) async {
-    final cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-    await cred.user?.updateDisplayName(name);
-    await _createUserDoc(cred.user!, name: name, role: role);
-    return cred;
+  Future<bool> signInWithGoogle({UserRole role = UserRole.locataire}) async {
+    await _saveDemoUser(name: 'Google User', email: 'google-user@demo.local', password: 'demo-google', role: role);
+    return true;
   }
 
-  Future<UserCredential> loginWithEmail(String email, String password) async {
-    return _auth.signInWithEmailAndPassword(email: email, password: password);
+  Future<void> sendOtp({required String phone, required Function(String verificationId) onCodeSent, required Function(String error) onError}) async {
+    onCodeSent('demo-verification-id');
   }
 
-  // ── Google ─────────────────────────────────────────────────────────────────
-
-  Future<UserCredential?> signInWithGoogle({UserRole role = UserRole.locataire}) async {
-    final googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) return null;
-
-    final googleAuth = await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    final cred = await _auth.signInWithCredential(credential);
-
-    final doc = await _db.collection('users').doc(cred.user!.uid).get();
-    if (!doc.exists) {
-      await _createUserDoc(cred.user!, name: googleUser.displayName ?? 'Utilisateur', role: role);
-    }
-    return cred;
-  }
-
-  // ── Phone OTP ──────────────────────────────────────────────────────────────
-
-  Future<void> sendOtp({
-    required String phone,
-    required Function(String verificationId) onCodeSent,
-    required Function(String error) onError,
-  }) async {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: phone,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await _auth.signInWithCredential(credential);
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        onError(e.message ?? 'Erreur de vérification');
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        onCodeSent(verificationId);
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
-  }
-
-  Future<UserCredential> verifyOtp({
-    required String verificationId,
-    required String smsCode,
-    required String name,
-    required UserRole role,
-  }) async {
-    final credential = PhoneAuthProvider.credential(
-      verificationId: verificationId,
-      smsCode: smsCode,
-    );
-    final cred = await _auth.signInWithCredential(credential);
-    final doc = await _db.collection('users').doc(cred.user!.uid).get();
-    if (!doc.exists) {
-      await _createUserDoc(cred.user!, name: name, role: role);
-    }
-    return cred;
-  }
-
-  // ── Utils ──────────────────────────────────────────────────────────────────
-
-  Future<void> _createUserDoc(User user, {required String name, required UserRole role}) async {
-    final appUser = AppUser(
-      id: user.uid,
-      name: name,
-      email: user.email ?? '',
-      phone: user.phoneNumber,
-      photoUrl: user.photoURL,
-      role: role,
-      createdAt: DateTime.now(),
-    );
-    await _db.collection('users').doc(user.uid).set(appUser.toFirestore());
+  Future<bool> verifyOtp({required String verificationId, required String smsCode, required String name, required UserRole role}) async {
+    await _saveDemoUser(name: name, email: 'phone-user@demo.local', password: 'demo-phone', role: role);
+    return true;
   }
 
   Future<void> signOut() async {
-    await _googleSignIn.signOut();
-    await _auth.signOut();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_demoSessionKey);
     _currentUser = null;
     notifyListeners();
   }
 
-  Future<void> resetPassword(String email) async {
-    await _auth.sendPasswordResetEmail(email: email);
-  }
+  Future<void> resetPassword(String email) async {}
 }

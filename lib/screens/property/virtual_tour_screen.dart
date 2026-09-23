@@ -125,7 +125,7 @@ class _Tour360ViewerState extends State<_Tour360Viewer> {
       child: ClipRect(
         child: Transform(
           transform: Matrix4.identity()
-            ..scaleByDouble(_scale, _scale, _scale, 1)
+            ..scaleByDouble(_scale, _scale, 1.0, 1)
             ..translateByDouble(_offsetX, 0.0, 0, 1),
           alignment: Alignment.center,
           child: Image.network(

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../models/models.dart';
+import '../services/favorites_service.dart';
 import '../theme/app_theme.dart';
+import 'app_image.dart';
 
 class PropertyCard extends StatelessWidget {
   final Property property;
@@ -11,6 +13,9 @@ class PropertyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final favorites = context.watch<FavoritesService>();
+    final isFav = favorites.isFavorite(property.id);
+
     return GestureDetector(
       onTap: () => context.push('/property/${property.id}'),
       child: Container(
@@ -29,16 +34,13 @@ class PropertyCard extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                    child: property.photoUrls.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: property.photoUrls.first,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            placeholder: (_, __) => Container(color: Colors.grey.shade200,
-                              child: const Center(child: CircularProgressIndicator(strokeWidth: 2))),
-                            errorWidget: (_, __, ___) => _PlaceholderImage(type: property.type),
-                          )
-                        : _PlaceholderImage(type: property.type),
+                    child: AppImage(
+                      url: property.photoUrls.isNotEmpty ? property.photoUrls.first : null,
+                      width: double.infinity,
+                      height: double.infinity,
+                      borderRadius: 0,
+                      placeholderEmoji: '🏢',
+                    ),
                   ),
                   // Badge disponibilité
                   Positioned(
@@ -55,16 +57,26 @@ class PropertyCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Certified badge
-                  if (property.isCertified)
-                    Positioned(
-                      top: 8, right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(color: AppColors.badgeCertified, shape: BoxShape.circle),
-                        child: const Icon(Icons.verified, color: Colors.white, size: 14),
+                  // Favorite button
+                  Positioned(
+                    top: 8, right: 8,
+                    child: GestureDetector(
+                      onTap: () => favorites.toggle(property.id),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: isFav ? AppColors.error : Colors.black.withValues(alpha: 0.4),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          isFav ? Icons.favorite : Icons.favorite_border,
+                          color: Colors.white,
+                          size: 16,
+                        ),
                       ),
                     ),
+                  ),
                   // 360 badge
                   if (property.tour360Urls.isNotEmpty)
                     Positioned(
@@ -83,6 +95,16 @@ class PropertyCard extends StatelessWidget {
                             Text('360°', style: TextStyle(color: Colors.white, fontSize: 10, fontFamily: 'Poppins')),
                           ],
                         ),
+                      ),
+                    ),
+                  // Certified badge
+                  if (property.isCertified)
+                    Positioned(
+                      top: 8, left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(color: AppColors.badgeCertified, shape: BoxShape.circle),
+                        child: const Icon(Icons.verified, color: Colors.white, size: 14),
                       ),
                     ),
                 ],
@@ -134,25 +156,3 @@ class PropertyCard extends StatelessWidget {
     );
   }
 }
-
-class _PlaceholderImage extends StatelessWidget {
-  final PropertyType type;
-  const _PlaceholderImage({required this.type});
-
-  @override
-  Widget build(BuildContext context) {
-    final emojis = {
-      PropertyType.appartement: '🏢',
-      PropertyType.studio: '🏠',
-      PropertyType.villa: '🏡',
-      PropertyType.chambre: '🛏️',
-      PropertyType.autre: '🏘️',
-    };
-    return Container(
-      color: AppColors.primaryLight,
-      child: Center(child: Text(emojis[type] ?? '🏠', style: const TextStyle(fontSize: 40))),
-    );
-  }
-}
-
-

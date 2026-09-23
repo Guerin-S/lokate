@@ -1,0 +1,492 @@
+{
+  "@@locale": "fr",
+
+  "appTitle": "LOKATE",
+  "appTagline": "Loue depuis chez toi",
+
+  "onboardingTitle1": "Trouvez votre logement",
+  "onboardingSubtitle1": "Parcourez des centaines d'appartements, studios et villas à Douala et Yaoundé depuis votre téléphone.",
+  "onboardingTitle2": "Visite virtuelle 360°",
+  "onboardingSubtitle2": "Visitez chaque pièce en détail sans bouger de chez vous grâce à notre galerie interactive 360°.",
+  "onboardingTitle3": "Payez en Mobile Money",
+  "onboardingSubtitle3": "MTN MoMo, Orange Money ou carte bancaire — choisissez le mode de paiement qui vous convient.",
+  "onboardingTitle4": "Signez en ligne",
+  "onboardingSubtitle4": "Contrat signé, clés récupérées — tout se fait sans paperasse inutile.",
+  "onboardingSkip": "Passer",
+  "onboardingNext": "Suivant",
+  "onboardingStart": "Commencer",
+
+  "loginWelcomeBack": "Bon retour 👋",
+  "loginSubtitle": "Connectez-vous à votre compte",
+  "loginEmail": "Email",
+  "loginEmailHint": "votre@email.com",
+  "loginPassword": "Mot de passe",
+  "loginPasswordHint": "••••••",
+  "loginPasswordMin": "6 caractères minimum",
+  "loginForgotPassword": "Mot de passe oublié ?",
+  "loginForgotPasswordTitle": "Réinitialiser le mot de passe",
+  "loginForgotPasswordSubtitle": "Entrez votre email pour réinitialiser",
+  "loginForgotPasswordSent": "Email de réinitialisation envoyé",
+  "loginForgotPasswordError": "Impossible d'envoyer l'email",
+  "loginButton": "Se connecter",
+  "loginOr": "ou",
+  "loginGoogle": "Continuer avec Google",
+  "loginPhone": "Continuer avec le numéro de téléphone",
+  "loginNoAccount": "Pas encore de compte ? ",
+  "loginCreateAccount": "Créer un compte",
+  "loginErrorInvalid": "Email ou mot de passe incorrect",
+  "loginErrorFirebase": "Connexion impossible pour le moment. Vérifiez votre configuration Firebase.",
+  "loginGoogleCancelled": "Connexion Google annulée",
+  "loginGoogleError": "Connexion Google échouée. Le mode démo est actif pour prévisualiser le parcours.",
+
+  "registerTitle": "Créer un compte",
+  "registerIAm": "Je suis...",
+  "registerTenant": "Locataire",
+  "registerOwner": "Propriétaire",
+  "registerName": "Nom complet",
+  "registerNameHint": "Jean Dupont",
+  "registerNameError": "Nom trop court",
+  "registerEmail": "Email",
+  "registerEmailHint": "votre@email.com",
+  "registerEmailError": "Email invalide",
+  "registerPassword": "Mot de passe",
+  "registerPasswordHint": "••••••",
+  "registerPasswordMin": "6 caractères minimum",
+  "registerPhone": "Numéro de téléphone",
+  "registerPhoneHint": "6XX XXX XXX",
+  "registerPhonePrefix": "+237 ",
+  "registerPhoneError": "9 chiffres requis",
+  "registerButton": "Créer mon compte",
+  "registerPhoneButton": "Envoyer le code SMS",
+  "registerError": "Inscription échouée. Vérifiez votre configuration Firebase ou continuez en mode démo.",
+
+  "otpTitle": "Vérification SMS",
+  "otpSubtitle": "Code de vérification",
+  "otpSentTo": "Nous avons envoyé un code SMS au\n{phone}",
+  "@otpSentTo": {
+    "placeholders": {
+      "phone": {"type": "String"}
+    }
+  },
+  "otpVerify": "Vérifier",
+  "otpResend": "Renvoyer le code",
+  "otpError": "Code incorrect. Réessayez.",
+  "otpDefaultName": "Utilisateur",
+
+  "homeGreeting": "Bonjour {name} 👋",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "homeSearchPlaceholder": "Rechercher un quartier, une ville...",
+  "homeSearchDouala": "Rechercher à Douala, Yaoundé...",
+  "homeResultsCount": "{count} logements trouvés",
+  "@homeResultsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "filterAll": "Tous",
+  "filterApartment": "Appartement",
+  "filterStudio": "Studio",
+  "filterVilla": "Villa",
+  "filterRoom": "Chambre",
+
+  "emptySearchTitle": "Aucun résultat",
+  "emptySearchSubtitle": "Aucun logement ne correspond à \"{query}\". Essayez avec d'autres mots-clés.",
+  "@emptySearchSubtitle": {
+    "placeholders": {
+      "query": {"type": "String"}
+    }
+  },
+  "emptyPropertiesTitle": "Aucun logement trouvé",
+  "emptyPropertiesSubtitle": "Modifiez vos filtres pour voir plus de résultats.",
+
+  "mapSearch": "Rechercher sur la carte...",
+  "mapPropertiesCount": "{count} logements",
+  "@mapPropertiesCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "mapView": "Voir",
+
+  "navHome": "Accueil",
+  "navMap": "Carte",
+  "navMessages": "Messages",
+  "navDashboard": "Gestion",
+  "navFavorites": "Favoris",
+  "navProfile": "Profil",
+
+  "propertyLoading": "Chargement du logement...",
+  "propertyNotFound": "Logement introuvable",
+  "propertyNotFoundSubtitle": "Ce logement a peut-être été supprimé.",
+  "propertyVirtualTour": "Visite 360°",
+  "propertyAvailable": "✓ Disponible",
+  "propertyOccupied": "✗ Occupé",
+  "propertyMonthlyRent": "Loyer mensuel",
+  "propertyBedrooms": "Chambres",
+  "propertyBathrooms": "Salles de bain",
+  "propertySurface": "m²",
+  "propertyDescription": "Description",
+  "propertyAmenities": "Équipements",
+  "propertyOwner": "Propriétaire",
+  "propertyReviews": "Avis ({count})",
+  "@propertyReviews": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "propertyContact": "Contacter",
+  "propertyReserveNow": "Réserver maintenant",
+  "propertySendMessage": "Envoyer une demande",
+
+  "virtualTourTitle": "Visite virtuelle 360°",
+  "virtualTourPiece": "Pièce {current} / {total}",
+  "@virtualTourPiece": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "virtualTourSwipe": "← Glissez pour naviguer →",
+  "virtualTourLoading": "Chargement de la vue 360°...",
+  "virtualTourUnavailable": "Visite 360° non disponible",
+  "virtualTourNoData": "Ce logement n'a pas encore de visite virtuelle.",
+  "virtualTourSeePhotos": "Voir les photos",
+
+  "filterTitle": "Filtres",
+  "filterReset": "Réinitialiser",
+  "filterType": "Type de logement",
+  "filterCity": "Ville",
+  "filterBudget": "Budget mensuel (FCFA)",
+  "filterBedroomsMin": "Chambres minimum",
+  "filterApply": "Appliquer les filtres",
+  "filterPriceRange": "{min} FCFA",
+  "@filterPriceRange": {
+    "placeholders": {
+      "min": {"type": "int"}
+    }
+  },
+
+  "bookingTitle": "Réserver ce logement",
+  "bookingNotFound": "Logement introuvable",
+  "bookingError": "Erreur lors de la réservation",
+  "bookingSuccessTitle": "Demande envoyée !",
+  "bookingSuccessSubtitle": "Le propriétaire examinera votre demande et vous contactera.",
+  "bookingBackHome": "Retour à l'accueil",
+  "bookingFrequency": "Fréquence de paiement",
+  "bookingMonthly": "Mensuel",
+  "bookingMonthlyPrice": "{price} FCFA/mois",
+  "@bookingMonthlyPrice": {
+    "placeholders": {
+      "price": {"type": "int"}
+    }
+  },
+  "bookingAnnual": "Annuel",
+  "bookingAnnualDiscount": "-10% de réduction",
+  "bookingMoveInDate": "Date d'emménagement",
+  "bookingMessage": "Message au propriétaire (optionnel)",
+  "bookingMessageHint": "Présentez-vous et expliquez votre situation...",
+  "bookingBaseRent": "Loyer de base",
+  "bookingAnnualDiscountLabel": "Réduction annuelle",
+  "bookingTotal": "Total à payer",
+  "bookingPerYear": "par an",
+  "bookingPerMonth": "par mois",
+  "bookingContinuePayment": "Continuer vers le paiement",
+  "bookingSendRequest": "Envoyer la demande",
+
+  "paymentTitle": "Paiement",
+  "paymentAmount": "Montant à payer",
+  "paymentMonthly": "Paiement mensuel",
+  "paymentAnnual": "Paiement annuel",
+  "paymentMethod": "Mode de paiement",
+  "paymentMTN": "MTN Mobile Money",
+  "paymentOrange": "Orange Money",
+  "paymentCard": "Carte bancaire (Visa/MasterCard)",
+  "paymentSecure": "Paiement 100% sécurisé",
+  "paymentProcessing": "Traitement en cours...",
+  "paymentPay": "Payer {amount} FCFA",
+  "@paymentPay": {
+    "placeholders": {
+      "amount": {"type": "int"}
+    }
+  },
+  "paymentError": "Paiement échoué. Réessayez.",
+  "paymentNumberMTN": "Numéro MTN",
+  "paymentNumberOrange": "Numéro Orange",
+  "paymentPhoneHint": "6XX XXX XXX",
+  "paymentPhonePrefix": "+237 ",
+  "paymentPhoneConfirmationMTN": "Vous recevrez un message de confirmation MTN MoMo sur ce numéro.",
+  "paymentPhoneConfirmationOrange": "Vous recevrez un message de confirmation Orange Money sur ce numéro.",
+  "paymentCardNumber": "Numéro de carte",
+  "paymentCardHint": "1234 5678 9012 3456",
+  "paymentCardExpiry": "Expiration",
+  "paymentCardExpiryHint": "MM/AA",
+  "paymentCardCVV": "CVV",
+  "paymentCardCVVHint": "•••",
+
+  "contractTitle": "Contrat de location",
+  "contractSignedTitle": "Contrat signé !",
+  "contractSignedSubtitle": "Félicitations ! Votre contrat de location a été signé avec sucesso.",
+  "contractBackHome": "Retour à l'accueil",
+  "contractHeading": "CONTRAT DE LOCATION",
+  "contractBrand": "LOKATE — {year}",
+  "@contractBrand": {
+    "placeholders": {
+      "year": {"type": "int"}
+    }
+  },
+  "contractProperty": "Bien loué",
+  "contractStartDate": "Date de début",
+  "contractRent": "Loyer",
+  "contractFrequency": "Fréquence",
+  "contractMonthly": "Mensuel",
+  "contractAnnual": "Annuel",
+  "contractTerms": "Conditions générales",
+  "contractAccept": "J'ai lu et j'accepte les conditions générales du contrat de location.",
+  "contractSign": "Signer le contrat",
+  "contractArticle1Title": "Article 1 – OBJET DU CONTRAT",
+  "contractArticle1Body": "Le présent contrat a pour objet la location d'un logement situé au adresse indiquée dans la réservation, par le Locataire auprès du Propriétaire.",
+  "contractArticle2Title": "Article 2 – DURÉE",
+  "contractArticle2Body": "Le contrat est conclu pour la durée indiquée dans la réservation, renouvelable par tacite reconduction sauf dénonciation par l'une des parties avec un préavis de 30 jours.",
+  "contractArticle3Title": "Article 3 – LOYER",
+  "contractArticle3Body": "Le montant du loyer est celui convenu lors de la réservation. Il est payable d'avance, soit mensuellement soit annuellement selon l'option choisie.",
+  "contractArticle4Title": "Article 4 – CHARGES",
+  "contractArticle4Body": "Les charges locatives sont incluses dans le loyer sauf exception mentionnée explicitement. Les charges de consommation (eau, électricité) restent à la charge du locataire.",
+  "contractArticle5Title": "Article 5 – ÉTAT DES LIEUX",
+  "contractArticle5Body": "Un état des lieux d'entrée sera effectué le jour de la remise des clés. Le locataire s'engage à restituer le logement en bon état.",
+  "contractArticle6Title": "Article 6 – RÉSILIATION",
+  "contractArticle6Body": "Chaque partie peut résilier le contrat avec un préavis de 30 jours. En cas de non-paiement, le propriétaire peut résilier sans préavis.",
+  "contractArticle7Title": "Article 7 – DROIT APPLICABLE",
+  "contractArticle7Body": "Le présent contrat est régi par les lois de la République du Cameroun. Tout litige sera soumis aux tribunaux compétents de Douala.",
+
+  "chatEmptyTitle": "Aucun message",
+  "chatEmptySubtitle": "Contactez un propriétaire pour démarrer une conversation.",
+  "chatOnline": "En ligne",
+  "chatInputHint": "Votre message...",
+  "chatStartConversation": "Démarrez la conversation",
+  "chatSendMessageTo": "Envoyez un message à {name}",
+  "@chatSendMessageTo": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "chatNow": "maintenant",
+  "chatMinutesAgo": "{minutes}min",
+  "@chatMinutesAgo": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "chatHoursAgo": "{hours}h",
+  "@chatHoursAgo": {
+    "placeholders": {
+      "hours": {"type": "int"}
+    }
+  },
+  "chatDaysAgo": "{days}j",
+  "@chatDaysAgo": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "chatDefaultName": "Utilisateur",
+
+  "profileRating": "{rating} ({count} avis)",
+  "@profileRating": {
+    "placeholders": {
+      "rating": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "profileMyAccount": "Mon compte",
+  "profilePersonalInfo": "Informations personnelles",
+  "profilePhone": "Téléphone : {phone}",
+  "@profilePhone": {
+    "placeholders": {
+      "phone": {"type": "String"}
+    }
+  },
+  "profilePhoneNotSet": "Non renseigné",
+  "profileRentalHistory": "Historique des locations",
+  "profilePreferences": "Préférences",
+  "profileLightMode": "Mode clair",
+  "profileDarkMode": "Mode sombre",
+  "profileLanguage": "Langue / Language",
+  "profileNotifications": "Notifications",
+  "profileSupport": "Support",
+  "profileHelp": "Centre d'aide",
+  "profilePrivacy": "Confidentialité",
+  "profileShare": "Partager LOKATE",
+  "profileAbout": "À propos de LOKATE",
+  "profileLogout": "Se déconnecter",
+  "profileEditTitle": "Modifier le profil",
+  "profileEditName": "Nom complet",
+  "profileEditNameHint": "Votre nom",
+  "profileEditSaved": "Profil mis à jour !",
+  "profileEditSave": "Enregistrer",
+  "profileAboutText": "Louez depuis chez vous avec visite virtuelle 360° et paiement Mobile Money.",
+  "profileClose": "Fermer",
+
+  "reviewTitle": "Laisser un avis",
+  "reviewExperience": "Votre expérience",
+  "reviewHelpOthers": "Votre avis aide les autres utilisateurs à faire le bon choix.",
+  "reviewComment": "Votre commentaire",
+  "reviewCommentHint": "Décrivez votre expérience avec ce logement / propriétaire...",
+  "reviewSubmit": "Publier mon avis",
+  "reviewSuccess": "Avis publié avec succès !",
+  "reviewError": "Erreur lors de la publication",
+  "reviewRatingVeryBad": "Très mauvais",
+  "reviewRatingBad": "Mauvais",
+  "reviewRatingOk": "Correct",
+  "reviewRatingGood": "Bien",
+  "reviewRatingExcellent": "Excellent !",
+
+  "dashboardTitle": "Mon tableau de bord",
+  "dashboardAddProperty": "Ajouter un bien",
+  "dashboardLoading": "Chargement de vos biens...",
+  "dashboardPublished": "Biens publiés",
+  "dashboardAvailable": "Disponibles",
+  "dashboardOccupied": "Occupés",
+  "dashboardMyProperties": "Mes logements",
+  "dashboardRequests": "Demandes",
+  "dashboardEmptyTitle": "Aucun bien publié",
+  "dashboardEmptySubtitle": "Publiez votre premier logement pour commencer à recevoir des demandes.",
+  "dashboardEmptyAction": "Publier un bien",
+  "dashboardAvailableLabel": "Disponible",
+  "dashboardOccupiedLabel": "Occupé",
+  "dashboardMarkOccupied": "Marqué comme occupé",
+  "dashboardMarkAvailable": "Marqué comme disponible",
+  "dashboardDeleteTitle": "Supprimer ce bien ?",
+  "dashboardDeleteSubtitle": "Cette action est irréversible. Toutes les données seront perdues.",
+  "dashboardCancel": "Annuler",
+  "dashboardDelete": "Supprimer",
+  "dashboardDeleted": "Bien supprimé",
+  "dashboardEdit": "Modifier",
+  "dashboardMarkOccupiedAction": "Marquer occupé",
+  "dashboardMarkAvailableAction": "Marquer disponible",
+
+  "ownerReservationsTitle": "Demandes de location",
+  "ownerReservationsEmpty": "Aucune demande",
+  "ownerStatusPending": "En attente",
+  "ownerStatusApproved": "Approuvée",
+  "ownerStatusActive": "Active",
+  "ownerStatusRejected": "Rejetée",
+  "ownerStatusCompleted": "Terminée",
+  "ownerReject": "Refuser",
+  "ownerApprove": "Approuver",
+  "ownerPricePerMonth": "{price} FCFA / mois",
+  "@ownerPricePerMonth": {
+    "placeholders": {
+      "price": {"type": "int"}
+    }
+  },
+  "ownerPricePerYear": "{price} FCFA / an",
+  "@ownerPricePerYear": {
+    "placeholders": {
+      "price": {"type": "int"}
+    }
+  },
+
+  "addPropertyTitle": "Publier un logement",
+  "addPropertyStep1": "Informations générales",
+  "addPropertyStep1Of3": "Étape 1 sur 3",
+  "addPropertyTitleLabel": "Titre du bien",
+  "addPropertyTitleHint": "Ex: Bel appartement 3 pièces à Bonapriso",
+  "addPropertyTitleError": "Titre trop court",
+  "addPropertyType": "Type de bien",
+  "addPropertyTypeApartment": "Appartement",
+  "addPropertyTypeStudio": "Studio",
+  "addPropertyTypeVilla": "Villa",
+  "addPropertyTypeRoom": "Chambre",
+  "addPropertyTypeOther": "Autre",
+  "addPropertyDescription": "Description",
+  "addPropertyDescriptionHint": "Décrivez votre logement en détail...",
+  "addPropertyDescriptionError": "Description trop courte",
+  "addPropertyStep2": "Localisation & Prix",
+  "addPropertyStep2Of3": "Étape 2 sur 3",
+  "addPropertyCity": "Ville",
+  "addPropertyDistrict": "Quartier",
+  "addPropertyDistrictHint": "Ex: Bonapriso, Akwa, Bastos...",
+  "addPropertyAddress": "Adresse complète",
+  "addPropertyAddressHint": "Rue, numéro...",
+  "addPropertyFieldRequired": "Champ requis",
+  "addPropertyRent": "Loyer mensuel (FCFA)",
+  "addPropertyRentHint": "Ex: 150000",
+  "addPropertyRentError": "Prix invalide",
+  "addPropertyBedrooms": "Chambres",
+  "addPropertyBathrooms": "Salles de bain",
+  "addPropertySurface": "Surface (m²)",
+  "addPropertySurfaceHint": "Ex: 80",
+  "addPropertyBack": "← Retour",
+  "addPropertyNext": "Suivant →",
+  "addPropertyStep3": "Photos & Équipements",
+  "addPropertyStep3Of3": "Étape 3 sur 3",
+  "addPropertyPhotos": "Photos du logement",
+  "addPropertyAddPhotos": "Ajouter des photos",
+  "addPropertyAmenities": "Équipements",
+  "addPropertyReservationMode": "Mode de réservation",
+  "addPropertyImmediate": "Réservation immédiate",
+  "addPropertyApprovalRequired": "Approbation requise",
+  "addPropertyImmediateDesc": "Les locataires peuvent réserver directement",
+  "addPropertyApprovalDesc": "Vous approuvez chaque demande avant confirmation",
+  "addPropertyPublishing": "Publication...",
+  "addPropertyPublish": "Publier",
+  "addPropertySuccess": "Bien publié avec succès !",
+  "addPropertyError": "Erreur lors de la publication",
+
+  "amenityWifi": "WiFi",
+  "amenityParking": "Parking",
+  "amenityAC": "Climatisation",
+  "amenityGuard": "Gardien",
+  "amenityGenerator": "Groupe électrogène",
+  "amenityHotWater": "Eau chaude",
+  "amenityBalcony": "Balcon",
+  "amenityKitchen": "Cuisine équipée",
+  "amenityPool": "Piscine",
+
+  "editPropertyTitle": "Modifier le logement",
+  "editPropertySuccess": "Logement mis à jour !",
+  "editPropertyError": "Erreur lors de la mise à jour",
+  "editPropertySave": "Enregistrer les modifications",
+  "editPropertyAvailable": "Disponible",
+
+  "badgeVerified": "Vérifié",
+  "badgeCertified": "Certifié",
+  "badgeTrusted": "Fiable",
+
+  "cardAvailable": "Disponible",
+  "cardOccupied": "Occupé",
+  "card360": "360°",
+  "cardBedroomsShort": "{count} ch.",
+  "@cardBedroomsShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cardSurfaceShort": "{surface} m²",
+  "@cardSurfaceShort": {
+    "placeholders": {
+      "surface": {"type": "int"}
+    }
+  },
+
+  "emptyErrorTitle": "Une erreur est survenue",
+  "emptyErrorSubtitle": "Vérifiez votre connexion internet et réessayez.",
+  "emptyErrorRetry": "Réessayer",
+
+  "commonLoading": "Chargement...",
+  "commonRetry": "Réessayer",
+  "commonCancel": "Annuler",
+  "commonSave": "Enregistrer",
+  "commonDelete": "Supprimer",
+  "commonConfirm": "Confirmer",
+  "commonClose": "Fermer",
+  "commonBack": "Retour",
+  "commonNext": "Suivant",
+  "commonSearch": "Rechercher",
+  "commonYes": "Oui",
+  "commonNo": "Non"
+}

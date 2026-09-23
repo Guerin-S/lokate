@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/auth_service.dart';
 import '../../services/property_service.dart';
 import '../../models/models.dart';
@@ -48,42 +47,15 @@ class _BookingScreenState extends State<BookingScreen> {
   Future<void> _submit() async {
     if (_property == null) return;
     setState(() => _submitting = true);
-    try {
-      final user = context.read<AuthService>().currentUser!;
-      final reservation = {
-        'propertyId': _property!.id,
-        'propertyTitle': _property!.title,
-        'tenantId': user.id,
-        'tenantName': user.name,
-        'ownerId': _property!.ownerId,
-        'status': _property!.reservationMode == ReservationMode.immediate
-            ? ReservationStatus.approved.name
-            : ReservationStatus.pending.name,
-        'paymentFrequency': _frequency.name,
-        'amount': _amount,
-        'startDate': Timestamp.fromDate(_startDate),
-        'createdAt': Timestamp.now(),
-        'message': _messageCtrl.text.trim(),
-      };
-
-      final doc = await FirebaseFirestore.instance
-          .collection('reservations')
-          .add(reservation);
-      if (!mounted) return;
-
-      if (_property!.reservationMode == ReservationMode.immediate) {
-        context.go('/payment/${doc.id}');
-      } else {
-        _showSuccess();
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erreur lors de la réservation')));
-    } finally {
-      if (mounted) {
-        setState(() => _submitting = false);
-      }
+    await Future.delayed(const Duration(seconds: 1));
+    if (!mounted) return;
+    final mockId = 'res_${DateTime.now().millisecondsSinceEpoch}';
+    if (_property!.reservationMode == ReservationMode.immediate) {
+      context.go('/payment/$mockId');
+    } else {
+      _showSuccess();
     }
+    if (mounted) setState(() => _submitting = false);
   }
 
   void _showSuccess() {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/models.dart';
 import '../theme/app_theme.dart';
+import 'app_image.dart';
 
 class PropertyCardHorizontal extends StatelessWidget {
   final Property property;
@@ -20,15 +21,14 @@ class PropertyCardHorizontal extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Image
             ClipRRect(
               borderRadius: const BorderRadius.horizontal(left: Radius.circular(16)),
-              child: SizedBox(
+              child: AppImage(
+                url: property.photoUrls.isNotEmpty ? property.photoUrls.first : null,
                 width: 120,
-                child: property.photoUrls.isNotEmpty
-                    ? Image.network(property.photoUrls.first, fit: BoxFit.cover)
-                    : Container(color: AppColors.primaryLight,
-                        child: const Center(child: Text('🏠', style: TextStyle(fontSize: 36)))),
+                height: 120,
+                borderRadius: 0,
+                placeholderEmoji: '🏢',
               ),
             ),
             Expanded(
@@ -73,4 +73,3 @@ class PropertyCardHorizontal extends StatelessWidget {
     );
   }
 }
-

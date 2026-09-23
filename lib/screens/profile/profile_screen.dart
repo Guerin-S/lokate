@@ -4,7 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../../services/auth_service.dart';
 import '../../services/theme_service.dart';
+import '../../services/share_service.dart';
+import '../../services/notification_service.dart';
 import '../../theme/app_theme.dart';
+import '../../models/models.dart';
 import '../../widgets/badge_chip.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -27,7 +30,7 @@ class ProfileScreen extends StatelessWidget {
                     background: Container(
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [AppColors.primary, Color(0xFF1D4ED8)],
+                          colors: [AppColors.primary, AppColors.primaryDark],
                           begin: Alignment.topLeft, end: Alignment.bottomRight,
                         ),
                       ),
@@ -35,13 +38,24 @@ class ProfileScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const SizedBox(height: 40),
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
-                            backgroundColor: Colors.white.withValues(alpha:0.2),
-                            child: user.photoUrl == null
-                                ? Text(user.name[0], style: const TextStyle(fontSize: 32, color: Colors.white, fontWeight: FontWeight.bold))
-                                : null,
+                          Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              CircleAvatar(
+                                radius: 40,
+                                backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
+                                backgroundColor: Colors.white.withValues(alpha:0.15),
+                                child: user.photoUrl == null
+                                    ? Text(user.name[0], style: const TextStyle(fontSize: 32, color: Colors.white, fontWeight: FontWeight.w700))
+                                    : null,
+                              ),
+                              if (user.isVerified)
+                                Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(color: AppColors.gold, shape: BoxShape.circle, border: Border.all(color: AppColors.primary, width: 2)),
+                                  child: const Icon(Icons.verified, size: 14, color: AppColors.primaryDark),
+                                ),
+                            ],
                           ),
                           const SizedBox(height: 10),
                           Text(user.name, style: const TextStyle(fontFamily: 'Poppins', fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
@@ -75,9 +89,38 @@ class ProfileScreen extends StatelessWidget {
                         ],
                         const SizedBox(height: 24),
 
+                        // Abonnement premium — vendable
+                        if (user.role == UserRole.proprietaire)
+                          GestureDetector(
+                            onTap: () => context.push('/subscription'),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryDark], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                                borderRadius: BorderRadius.circular(14),
+                                boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 12, offset: const Offset(0, 4))],
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(width: 44, height: 44, decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.workspace_premium, color: AppColors.primaryDark)),
+                                  const SizedBox(width: 12),
+                                  const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                    Text('Passez Pro', style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white)),
+                                    SizedBox(height: 2),
+                                    Text('10 biens • Badge vérifié • Top recherche', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: Colors.white70)),
+                                  ])),
+                                  Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(20)), child: const Text('Dès 5K', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.primaryDark))),
+                                  const SizedBox(width: 6),
+                                  const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.white70),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if (user.role == UserRole.proprietaire) const SizedBox(height: 16),
+
                         // Menu items
                         _MenuSection(title: 'Mon compte', items: [
-                          _MenuItem(icon: Icons.person_outline, label: 'Informations personnelles', onTap: () {}),
+                          _MenuItem(icon: Icons.person_outline, label: 'Informations personnelles', onTap: () => _showEditProfile(context, user)),
                           _MenuItem(icon: Icons.phone_outlined, label: 'Téléphone : ${user.phone ?? "Non renseigné"}', onTap: () {}),
                           _MenuItem(icon: Icons.history, label: 'Historique des locations', onTap: () {}),
                         ]),
@@ -98,7 +141,8 @@ class ProfileScreen extends StatelessWidget {
                         _MenuSection(title: 'Support', items: [
                           _MenuItem(icon: Icons.help_outline, label: 'Centre d\'aide', onTap: () {}),
                           _MenuItem(icon: Icons.shield_outlined, label: 'Confidentialité', onTap: () {}),
-                          _MenuItem(icon: Icons.info_outline, label: 'À propos de LOKATE', onTap: () {}),
+                          _MenuItem(icon: Icons.share_outlined, label: 'Partager LOKATE', onTap: () => ShareService.shareApp()),
+                          _MenuItem(icon: Icons.info_outline, label: 'À propos de LOKATE', onTap: () => _showAbout(context)),
                         ]),
                         const SizedBox(height: 24),
 
@@ -176,6 +220,81 @@ class _MenuItem extends StatelessWidget {
       dense: true,
     );
   }
+}
+
+void _showEditProfile(BuildContext context, dynamic user) {
+  final nameCtrl = TextEditingController(text: user.name);
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) => Padding(
+      padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Modifier le profil', style: AppTextStyles.h4),
+          const SizedBox(height: 20),
+          const Text('Nom complet', style: AppTextStyles.label),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: nameCtrl,
+            decoration: const InputDecoration(hintText: 'Votre nom'),
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                NotificationService.showSuccess(context, 'Profil mis à jour !');
+              },
+              child: const Text('Enregistrer'),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+void _showAbout(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 60, height: 60,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Center(child: Text('🏠', style: TextStyle(fontSize: 32))),
+          ),
+          const SizedBox(height: 16),
+          const Text('LOKATE', style: AppTextStyles.h3),
+          const SizedBox(height: 4),
+          Text('Version 1.0.0', style: AppTextStyles.caption.copyWith(color: AppColors.textSecondaryLight)),
+          const SizedBox(height: 12),
+          Text('Louez depuis chez vous avec visite virtuelle 360° et paiement Mobile Money.',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.body2.copyWith(color: AppColors.textSecondaryLight, height: 1.5)),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Fermer'),
+        ),
+      ],
+    ),
+  );
 }
 
 

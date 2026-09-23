@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 
@@ -16,187 +15,66 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _msgCtrl = TextEditingController();
   final _scrollCtrl = ScrollController();
+  final List<Map<String, dynamic>> _messages = [
+    {'senderId': 'other', 'content': 'Bonjour ! Le logement est-il toujours disponible ?', 'isMe': false, 'time': '10:30'},
+    {'senderId': 'me', 'content': 'Oui, bien sûr ! Quand souhaitez-vous visiter ?', 'isMe': true, 'time': '10:32'},
+  ];
 
-  void _send() async {
+  void _send() {
     final text = _msgCtrl.text.trim();
     if (text.isEmpty) return;
-    final user = context.read<AuthService>().currentUser!;
     _msgCtrl.clear();
-
-    final msg = {
-      'senderId': user.id,
-      'senderName': user.name,
-      'content': text,
-      'isRead': false,
-      'sentAt': Timestamp.now(),
-    };
-
-    await FirebaseFirestore.instance
-        .collection('chats').doc(widget.chatId)
-        .collection('messages').add(msg);
-
-    await FirebaseFirestore.instance.collection('chats').doc(widget.chatId).set({
-      'lastMessage': text,
-      'lastMessageAt': Timestamp.now(),
-    }, SetOptions(merge: true));
-
-    _scrollCtrl.animateTo(0, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+    setState(() => _messages.add({'senderId': 'me', 'content': text, 'isMe': true, 'time': 'Maintenant'}));
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollCtrl.hasClients) _scrollCtrl.animateTo(_scrollCtrl.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthService>().currentUser;
-
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: AppColors.primaryLight,
-              child: Text(widget.otherUserName.isNotEmpty ? widget.otherUserName[0] : '?',
-                style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.otherUserName, style: AppTextStyles.label),
-                const Text('En ligne', style: TextStyle(fontSize: 11, color: AppColors.success, fontFamily: 'Poppins')),
-              ],
-            ),
-          ],
-        ),
-      ),
+      appBar: AppBar(title: Text(widget.otherUserName.isEmpty ? 'Chat' : widget.otherUserName)),
       body: Column(
         children: [
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('chats').doc(widget.chatId)
-                  .collection('messages')
-                  .orderBy('sentAt', descending: true)
-                  .limit(50)
-                  .snapshots(),
-              builder: (_, snapshot) {
-                final docs = snapshot.data?.docs ?? [];
-                if (docs.isEmpty) return _EmptyChat(name: widget.otherUserName);
-                return ListView.builder(
-                  controller: _scrollCtrl,
-                  reverse: true,
-                  padding: const EdgeInsets.all(16),
-                  itemCount: docs.length,
-                  itemBuilder: (_, i) {
-                    final data = docs[i].data() as Map<String, dynamic>;
-                    final isMe = data['senderId'] == user?.id;
-                    return _MessageBubble(
-                      content: data['content'] ?? '',
-                      isMe: isMe,
-                      time: (data['sentAt'] as Timestamp).toDate(),
-                    );
-                  },
+            child: ListView.builder(
+              controller: _scrollCtrl,
+              padding: const EdgeInsets.all(16),
+              itemCount: _messages.length,
+              itemBuilder: (_, i) {
+                final m = _messages[i];
+                final isMe = m['isMe'] as bool;
+                return Align(
+                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: isMe ? AppColors.primary : (isDark ? AppColors.surfaceDark : Colors.grey.shade100),
+                      borderRadius: BorderRadius.circular(16).copyWith(bottomRight: isMe ? const Radius.circular(4) : null, bottomLeft: !isMe ? const Radius.circular(4) : null),
+                    ),
+                    child: Column(crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start, children: [
+                      Text(m['content'] as String, style: TextStyle(fontFamily: 'Poppins', fontSize: 13, color: isMe ? Colors.white : (isDark ? Colors.white : AppColors.textPrimaryLight))),
+                      const SizedBox(height: 4),
+                      Text(m['time'] as String, style: TextStyle(fontFamily: 'Poppins', fontSize: 10, color: isMe ? Colors.white70 : AppColors.textTertiaryLight)),
+                    ]),
+                  ),
                 );
               },
             ),
           ),
-
-          // Input bar
           Container(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha:0.06), blurRadius: 10, offset: const Offset(0, -2))],
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _msgCtrl,
-                    decoration: InputDecoration(
-                      hintText: 'Votre message...',
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: const BorderSide(color: AppColors.borderLight)),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: const BorderSide(color: AppColors.borderLight)),
-                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: const BorderSide(color: AppColors.primary)),
-                    ),
-                    onSubmitted: (_) => _send(),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: _send,
-                  child: Container(
-                    width: 46, height: 46,
-                    decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                    child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
-                  ),
-                ),
-              ],
-            ),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+            decoration: BoxDecoration(color: Theme.of(context).cardColor, border: Border(top: BorderSide(color: AppColors.borderLight.withValues(alpha: 0.5)))),
+            child: Row(children: [
+              Expanded(child: TextField(controller: _msgCtrl, decoration: InputDecoration(hintText: 'Votre message...', filled: true, fillColor: isDark ? AppColors.surfaceDark : AppColors.surfaceMutedLight, border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none), contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10)), onSubmitted: (_) => _send())),
+              const SizedBox(width: 8),
+              GestureDetector(onTap: _send, child: Container(width: 44, height: 44, decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle), child: const Icon(Icons.send, color: Colors.white, size: 20))),
+            ]),
           ),
         ],
       ),
     );
   }
 }
-
-class _MessageBubble extends StatelessWidget {
-  final String content;
-  final bool isMe;
-  final DateTime time;
-
-  const _MessageBubble({required this.content, required this.isMe, required this.time});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.only(bottom: 8, left: isMe ? 60 : 0, right: isMe ? 0 : 60),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: isMe ? AppColors.primary : (Theme.of(context).brightness == Brightness.dark ? AppColors.surfaceDark : Colors.grey.shade100),
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isMe ? 16 : 4),
-            bottomRight: Radius.circular(isMe ? 4 : 16),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            Text(content, style: TextStyle(fontFamily: 'Poppins', fontSize: 14, color: isMe ? Colors.white : null)),
-            const SizedBox(height: 4),
-            Text('${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
-              style: TextStyle(fontSize: 10, fontFamily: 'Poppins', color: isMe ? Colors.white60 : AppColors.textSecondaryLight)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _EmptyChat extends StatelessWidget {
-  final String name;
-  const _EmptyChat({required this.name});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('👋', style: TextStyle(fontSize: 48)),
-          const SizedBox(height: 12),
-          const Text('Démarrez la conversation', style: AppTextStyles.h4),
-          const SizedBox(height: 6),
-          Text('Envoyez un message à $name', style: AppTextStyles.body2.copyWith(color: AppColors.textSecondaryLight)),
-        ],
-      ),
-    );
-  }
-}
-
-
-

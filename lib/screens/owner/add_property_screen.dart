@@ -222,7 +222,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                   .copyWith(color: AppColors.textSecondaryLight)),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            initialValue: _city,
+            value: _city,
             items: _cities
                 .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                 .toList(),
@@ -410,29 +410,27 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
               style: AppTextStyles.label
                   .copyWith(color: AppColors.textSecondaryLight)),
           const SizedBox(height: 8),
-          RadioGroup<ReservationMode>(
-            groupValue: _reservationMode,
-            onChanged: (v) => setState(() => _reservationMode = v!),
-            child: Column(
-              children: ReservationMode.values
-                  .map((m) => RadioListTile<ReservationMode>(
-                        value: m,
-                        activeColor: AppColors.primary,
-                        title: Text(
-                            m == ReservationMode.immediate
-                                ? 'Réservation immédiate'
-                                : 'Approbation requise',
-                            style: AppTextStyles.body2),
-                        subtitle: Text(
-                            m == ReservationMode.immediate
-                                ? 'Les locataires peuvent réserver directement'
-                                : 'Vous approuvez chaque demande avant confirmation',
-                            style: AppTextStyles.caption
-                                .copyWith(color: AppColors.textSecondaryLight)),
-                        contentPadding: EdgeInsets.zero,
-                      ))
-                  .toList(),
-            ),
+          Column(
+            children: ReservationMode.values
+                .map((m) => RadioListTile<ReservationMode>(
+                      value: m,
+                      groupValue: _reservationMode,
+                      onChanged: (v) => setState(() => _reservationMode = v!),
+                      activeColor: AppColors.primary,
+                      title: Text(
+                          m == ReservationMode.immediate
+                              ? 'Réservation immédiate'
+                              : 'Approbation requise',
+                          style: AppTextStyles.body2),
+                      subtitle: Text(
+                          m == ReservationMode.immediate
+                              ? 'Les locataires peuvent réserver directement'
+                              : 'Vous approuvez chaque demande avant confirmation',
+                          style: AppTextStyles.caption
+                              .copyWith(color: AppColors.textSecondaryLight)),
+                      contentPadding: EdgeInsets.zero,
+                    ))
+                .toList(),
           ),
           const SizedBox(height: 28),
 
