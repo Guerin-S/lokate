@@ -10,6 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_SDK_ROOT: '${{ runner.tool_cache }}/android/sdk'
+      FLUTTER_ROOT: '${{ runner.tool_cache }}/flutter'
     steps:
       - uses: actions/checkout@v4
 
@@ -27,6 +30,14 @@ jobs:
       - name: Flutter doctor
         run: flutter doctor -v
 
+      - name: Accept licenses
+        run: yes | flutter doctor --android-licenses
+
+      - name: Set up Android
+        run: |
+          chmod +x ${{ env.ANDROID_SDK_ROOT }}/cmdline-tools/latest/bin/sdkmanager
+          ${{ env.ANDROID_SDK_ROOT }}/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-33" --install "build-tools;33.0.2"
+
       - name: Get dependencies
         run: flutter pub get --verbose
 
@@ -34,7 +45,7 @@ jobs:
         run: flutter gen-l10n
 
       - name: Build APK (release)
-        run: flutter build apk --release --no-tree-shake-icons
+        run: flutter build apk --release --no-tree-shake-icons --verbose
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
