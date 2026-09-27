@@ -1,4 +1,4 @@
-name: Build LOKATE APK
+name: Build LOKATE APK (Debug)
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.2'
+          flutter-version: '3.22.3'
           channel: 'stable'
           cache: true
 
@@ -34,16 +34,16 @@ jobs:
       - name: Generate l10n
         run: flutter gen-l10n
 
-      - name: Build APK (release)
-        run: flutter build apk --release --no-tree-shake-icons
+      - name: Build APK (debug)
+        run: flutter build apk --debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: lokate-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: lokate-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
 
       - name: Build info
         run: |
-          echo "✅ APK générée avec succès !"
-          ls -lh build/app/outputs/flutter-apk/app-release.apk
+          echo "✅ APK générée !"
+          ls -lh build/app/outputs/flutter-apk/app-debug.apk
